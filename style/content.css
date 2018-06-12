@@ -1,0 +1,189 @@
+:root {
+  --bg_main: #F5F5F5;
+  --bg_primary: #E0E0E0;
+  --bg_secondary: #BDBDBD;
+  --accent: #E91E63;
+  --dark_accent: #D81B60;
+  --dark_accent2: #C2185B;
+  --dark_accent3: #AD1457;
+  --dark_accent4: #880E4F;
+  --light_accent: #F06292;
+}
+
+input[type=text] {
+  height: 25px;
+  appearance: none;
+  text-align: center;
+  outline: none;
+  font-family: sans-serif;
+  font-size: calc(1vw + 1vh);
+  color: var(--dark_accent);
+  border: 1px solid var(--dark_accent);
+  background-color: var(--bg_main);
+}
+
+input[type=text]::placeholder {
+  color: var(--light_accent);
+}
+
+input[type=button], input[type=submit] {
+  height: 29px;
+  appearance: none;
+  text-align: center;
+  outline: none;
+  font-family: sans-serif;
+  font-size: calc(1vw + 1vh);
+  color: var(--dark_accent);
+  border: 1px solid var(--dark_accent);
+  background-color: var(--bg_primary);
+}
+
+input[type=button]:hover, input[type=submit]:hover {
+  cursor: pointer;
+  color: var(--bg_main);
+  border: 1px solid var(--dark_accent);
+  background-color: var(--dark_accent);
+}
+
+input[type=button]:active, input[type=submit]:active {
+  color: var(--bg_main);
+  border: 1px solid var(--dark_accent2);
+  background-color: var(--dark_accent2);
+}
+
+div#server_list {
+  width: 15%;
+  height: calc(100% - 28px);
+  top: 28px;
+  left: 0px;
+  border-right: 1px solid var(--dark_accent);
+  position: absolute;
+}
+
+div.entry {
+  width: 100%;
+  user-select: none;
+  cursor: pointer;
+}
+
+div.entry:not(.first):not(.channel):not(#newserver) {
+  margin-top: 5px;
+}
+
+div#newserver {
+  position: absolute;
+  bottom: 0;
+  background-color: var(--accent);
+}
+
+div#newserver:hover {
+  background-color: var(--dark_accent);
+}
+
+div#newserver:active {
+  background-color: var(--dark_accent2);
+}
+
+div.entry.server {
+  background-color: var(--dark_accent);
+}
+
+div.entry.channel {
+  background-color: var(--dark_accent2);
+}
+
+div.entry span.name {
+  color: var(--bg_primary);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  font-size: 18px;
+  font-family: sans-serif;
+  margin-top: 5px;
+  display: inline-block;
+  overflow: hidden;
+}
+
+div#window_frame {
+  width: calc(85% - 1px);
+  height: calc(100% - 28px);
+  top: 28px;
+  left: calc(15% + 1px);
+  position: absolute;
+  background-color: var(--bg_primary);
+}
+
+div#connect_form {
+  width: 40%;
+  height: 70%;
+  position: absolute;
+  left: 30%;
+  top: 15%;
+  border: 1px solid var(--accent);
+  background-color: var(--bg_main);
+}
+
+div#connect_form input {
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 3vh;
+  height: 14%;
+}
+
+div.content_frame {
+  width: 100%;
+  height: 100%;
+}
+
+div.join_channel_form {
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  left: 30%;
+  top: 25%;
+  border: 1px solid var(--accent);
+  background-color: var(--bg_main);
+}
+
+div.join_channel_form input {
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 3vh;
+  height: 22%;
+}
+
+input.content_chatbar {
+  width: 90%;
+  left: 1%;
+  height: 25px;
+  top: calc(100% - 25px - 20px);
+  position: absolute;
+  text-align: left;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+input.content_send {
+  width: 6.5%;
+  position: absolute;
+  left: 92.5%;
+  height: 29px;
+  top: calc(100% - 25px - 20px);
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+select.content_chat {
+  outline: none;
+  appearance: none;
+  background-color: var(--bg_main);
+  position: absolute;
+  width: 98%;
+  height: calc(100% - 1% - 25px - 20px - 2%);
+  top: 1%;
+  left: 1%;
+  overflow: hidden;
+  border: 1px solid var(--accent);
+}

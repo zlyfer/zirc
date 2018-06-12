@@ -1,0 +1,92 @@
+:root {
+  --bg_main: #F5F5F5;
+  --bg_primary: #E0E0E0;
+  --bg_secondary: #BDBDBD;
+  --accent: #E91E63;
+  --dark_accent: #C2185B;
+  --dark_accent2: #AD1457;
+  --light_accent: #F06292;
+}
+
+body {
+  background-color: var(--bg_main);
+}
+
+div.titlebar {
+  width: 100%;
+  height: 28px;
+  top: 0px;
+  left: 0px;
+  position: absolute;
+  background-color: var(--accent);
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+div.titlebar_button {
+  position: absolute;
+  height: 100%;
+  width: 32px;
+  -webkit-app-region: no-drag;
+  background-color: var(--dark_accent);
+}
+
+div.titlebar_button:hover {
+  background-color: var(--light_accent);
+  cursor: pointer;
+}
+
+div.titlebar_button:active {
+  background-color: var(--dark_accent2);
+}
+
+div#logo {
+  background-image: url("../images/logo.png");
+  background-repeat: no-repeat;
+  background-size: 28px;
+  height: 28px;
+  width: 28px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+div#close {
+  top: 0px;
+  right: 0px;
+}
+
+div#maximize {
+  top: 0px;
+  right: 32px;
+}
+
+div#minimize {
+  top: 0px;
+  right: 64px;
+}
+
+div#loading_animation {
+  display: none;
+  border: 32px solid var(--accent);
+  left: calc(100% - 37px - 32px);
+  top: calc(100% - 37px - 32px);
+  position: absolute;
+  border-radius: 50%;
+  width: 0px;
+  height: 0px;
+  animation: drop 0.8s linear infinite;
+}
+
+@keyframes drop {
+  0% {
+    border: 32px solid var(--accent);
+    left: calc(100% - 37px - 32px);
+    top: calc(100% - 37px - 32px);
+  }
+  90% {
+    border: 0px solid rgba(0, 0, 0, 0);
+    left: calc(100% - 37px);
+    top: calc(100% - 37px);
+  }
+}
