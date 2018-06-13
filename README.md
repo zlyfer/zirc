@@ -15,5 +15,5 @@ Design may change in future!
 ## Logo, Animations & Icons
 Logo, Animations and Icons by [Joshua 'sythys' Best](https://github.com/Sythys "sythys").
 ## FAQ
-#### How do I leave a server/channel?
+#### Q: How do I leave a server/channel?
 Rightclick on the server/channel in the server list.
