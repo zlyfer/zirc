@@ -88,16 +88,16 @@ input[type=text]:disabled {
 }
 
 div#window_frame {
-  width: 80%;
+  width: calc(100% - (2 * 128px));
   height: calc(100% - 28px);
   top: 28px;
-  left: 20%;
+  left: calc(2 * 128px);
   position: absolute;
   background-color: var(--white0);
 }
 
 div.content_frame {
-  width: 100%;
+  width: 80%;
   height: 100%;
 }
 
@@ -106,7 +106,7 @@ div#connect_form {
   height: 67%;
   position: absolute;
   left: 30%;
-  top: 12%;
+  top: 10%;
   /* display: none; */
 }
 
@@ -132,16 +132,6 @@ div.join_channel_form input {
   height: 22%;
 }
 
-div.content_chat {
-  background-color: var(--white0);
-  position: absolute;
-  width: 99%;
-  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
-  padding-top: 1%;
-  left: 1%;
-  overflow: auto;
-}
-
 input.content_chatuser {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -161,7 +151,7 @@ input.content_chatbar::placeholder {
 }
 
 input.content_chatbar {
-  width: calc(79% - 3px);
+  width: calc(59% - 3px);
   left: calc(11% + 1px);
   height: 30px;
   top: calc(99% - 20px - 20px);
@@ -177,7 +167,7 @@ input.content_chatbar {
 input.content_send {
   width: 8%;
   position: absolute;
-  left: 91%;
+  left: 71%;
   height: 34px;
   top: calc(99% - 20px - 20px);
   font-family: sans-serif;
@@ -186,12 +176,23 @@ input.content_send {
   border-bottom-right-radius: 10px;
 }
 
+div.content_chat {
+  background-color: var(--white0);
+  position: absolute;
+  width: 80%;
+  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
+  padding-top: 1%;
+  left: 1%;
+  overflow: auto;
+}
+
 div.content_chat_message {
-  width: 99%;
+  width: 100%;
   margin-bottom: 5px;
 }
 
 span.content_chat_message_sender {
+  min-height: 32px;
   width: 14%;
   display: inline-block;
   text-align: right;
@@ -200,33 +201,113 @@ span.content_chat_message_sender {
   font-family: sans-serif;
   font-size: 16px;
   line-height: 32px;
+  padding-right: 1%;
   position: absolute;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
 }
 
 span.content_chat_message_message {
   min-height: 32px;
-  width: 78%;
+  width: 80%;
+  margin-left: 15%;
   display: inline-block;
+  text-align: left;
+  font-weight: normal;
   color: var(--white4);
   font-family: sans-serif;
   font-size: 16px;
   line-height: 32px;
-  word-break: break-all;
-  margin-left: 15.1%;
+  word-wrap: break-word;
 }
 
 span.content_chat_message_timestamp {
-  right: 1.3%;
+  min-height: 32px;
+  width: 5%;
+  display: inline-block;
+  text-align: center;
+  font-weight: normal;
   color: var(--white5);
   font-family: sans-serif;
-  font-size: 13px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 28px;
+  /* word-wrap: break-word; */
   position: absolute;
 }
 
+div.content_frame_userlist {
+  position: absolute;
+  width: 19%;
+  left: 81%;
+  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
+  padding-top: 1%;
+  overflow: auto;
+}
+
+span.content_frame_userlist_user {
+  width: 90%;
+  min-height: 32px;
+  padding-left: 1%;
+  padding-right: 1%;
+  background-color: var(--white2);
+  border-radius: 15px;
+  margin-left: 5%;
+  margin-bottom: 5px;
+  display: inline-block;
+  color: var(--white8);
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 32px;
+  word-break: break-all;
+  text-align: center;
+}
+
+div#footer {
+  position: absolute;
+  top: calc(100% - 48px);
+  left: 0px;
+  width: calc(2 * 128px);
+  height: 48px;
+  background-color: var(--accent0);
+}
+
+div#newserver, div#settings {
+  position: absolute;
+  top: calc(100% - 48px);
+  width: 128px;
+  height: 48px;
+  background-color: var(--accent4);
+  cursor: pointer;
+}
+
+div#newserver {
+  left: 0px;
+  background-position: center;
+  background-image: url("../images/add.svg");
+  background-repeat: no-repeat;
+  background-size: 48px;
+}
+
+div#settings {
+  left: 128px;
+  background-position: center;
+  background-image: url("../images/set.svg");
+  background-repeat: no-repeat;
+  background-size: 48px;
+}
+
+div#newserver:hover, div#settings:hover {
+  background-color: var(--accent3);
+}
+
+div#newserver:active, div#settings:active {
+  background-color: var(--accent5);
+}
+
 div#server_list {
-  width: 20%;
-  height: calc(100% - 28px - 64px);
+  width: calc(2 * 128px);
+  height: calc(100% - 28px - 48px);
   top: 28px;
   left: 0px;
   background-color: var(--accent0);

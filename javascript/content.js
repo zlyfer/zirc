@@ -1,24 +1,29 @@
-const ircClient = require('node-irc');
+const irc = require('irc');
 var connections = {};
 
 function content_init() {
 
-  // document.getElementById('newserver').addEventListener('click', (e) => {
-  //   showConnectForm();
-  // });
+  document.getElementById('newserver').addEventListener('click', (e) => {
+    showConnectForm();
+  });
 
   document.getElementById('connect_connect').addEventListener('click', (e) => {
     let server = document.getElementById('connect_server').value;
     let port = document.getElementById('connect_port').value;
     let username = document.getElementById('connect_username').value;
     let realname = document.getElementById('connect_realname').value;
-    let client = new ircClient(server, port, username, realname);
+    let client = new irc.Client(server, username, {
+      userName: username,
+      realName: realname,
+      port: port
+    })
+    client.addListener('message', (nick, to, text, message) => {
+      newMSG(server, to, nick, text);
+    })
+    client.addListener('names', (channel, nicks) => {
+      genUserList(server, channel, nicks);
+    })
     connections[server] = client;
-    client.on('CHANMSG', (data) => {
-      console.log(server, data);
-      newMSG(server, data);
-    });
-    client.connect();
     joinServer(server);
     document.getElementById('connect_server').value = '';
     document.getElementById('connect_port').value = '';
@@ -37,7 +42,7 @@ function leaveServer(server) {
   removeAllChannelFrames(server);
   removeServerFrame(server);
   removeServerListEntry(server, 'server');
-  connections[server].quit("Disconnected from server.");
+  connections[server].disconnect("Disconnected from server.");
   delete connections[server];
 }
 
@@ -65,7 +70,7 @@ function removeServerListEntry(name, type, channel = false) {
 }
 
 function removeServerFrame(server) {
-  let content_frame = document.getElementById(`content_frame_server_${server}_`);
+  let content_frame = document.getElementById(`join_channel_form_server_${server}_`);
   content_frame.remove();
 }
 
@@ -94,7 +99,7 @@ function addServerListEntry(name, type, id, server = false) {
   entry.id = id;
   let showid;
   if (type == 'server') {
-    showid = `content_frame_server_${name}_`;
+    showid = `join_channel_form_server_${name}_`;
     entry.addEventListener('contextmenu', (e) => {
       if (e.target.innerHTML == name) {
         leaveServer(name);
@@ -110,7 +115,7 @@ function addServerListEntry(name, type, id, server = false) {
   }
   entry.addEventListener('click', (e) => {
     if (e.target.innerHTML == name) {
-      showContentForm(showid);
+      showElement(showid);
     }
   });
   entry_name.className = 'name';
@@ -127,13 +132,10 @@ function addServerListEntry(name, type, id, server = false) {
 
 function addServerFrame(server) {
   let window_frame = document.getElementById('window_frame');
-  let content_frame = document.createElement('div');
   let join_channel_form = document.createElement('div');
   let join_channel_server = document.createElement('input');
   let join_channel_channel = document.createElement('input');
   let join_channel_button = document.createElement('input');
-  content_frame.className = 'content_frame';
-  content_frame.id = `content_frame_server_${server}_`;
   join_channel_form.className = 'join_channel_form';
   join_channel_form.id = `join_channel_form_server_${server}_`;
   join_channel_server.className = 'join_channel_server';
@@ -157,8 +159,7 @@ function addServerFrame(server) {
   join_channel_form.append(join_channel_server);
   join_channel_form.append(join_channel_channel);
   join_channel_form.append(join_channel_button);
-  content_frame.append(join_channel_form);
-  window_frame.append(content_frame);
+  window_frame.append(join_channel_form);
 }
 
 function addChannelFrame(server, channel) {
@@ -176,7 +177,7 @@ function addChannelFrame(server, channel) {
   content_chatuser.id = `content_chatuser_server_${server}_channel_${channel}_`;
   content_chatuser.type = 'text';
   content_chatuser.disabled = true;
-  content_chatuser.value = connections[server].nickname;
+  content_chatuser.value = connections[server].nick;
   content_chatbar.className = 'content_chatbar';
   content_chatbar.id = `content_chatbar_server_${server}_channel_${channel}_`;
   content_chatbar.type = 'text';
@@ -191,11 +192,7 @@ function addChannelFrame(server, channel) {
     if (message != '') {
       content_chatbar.value = '';
       connections[server].say(channel, message);
-      newMSG(server, {
-        receiver: channel,
-        sender: connections[server].nickname,
-        message: message
-      });
+      newMSG(server, channel, connections[server].nick, message);
     }
   });
   content_frame.append(content_chat);
@@ -205,28 +202,45 @@ function addChannelFrame(server, channel) {
   window_frame.append(content_frame);
 }
 
-function newMSG(server, data) {
-  let content_chat = document.getElementById(`content_chat_server_${server}_channel_${data.receiver}_`);
+function newMSG(server, channel, sender, message) {
+  let content_chat = document.getElementById(`content_chat_server_${server}_channel_${channel}_`);
   let content_chat_message = document.createElement('div');
   let content_chat_message_sender = document.createElement('span');
   let content_chat_message_message = document.createElement('span');
   let content_chat_message_timestamp = document.createElement('span');
+  let date = new Date();
+  content_chat_message.className = "content_chat_message";
   content_chat_message_sender.className = "content_chat_message_sender";
-  content_chat_message_sender.innerHTML = `${data.sender}`;
+  content_chat_message_sender.innerHTML = sender;
   content_chat_message_message.className = "content_chat_message_message";
-  content_chat_message_message.innerHTML = `${data.message}`;
+  content_chat_message_message.innerHTML = message;
   content_chat_message_timestamp.className = "content_chat_message_timestamp";
-  content_chat_message_timestamp.innerHTML = `00:00`;
+  content_chat_message_timestamp.innerHTML = `${date.getHours()}:${date.getMinutes()}`;
   content_chat_message.append(content_chat_message_sender);
   content_chat_message.append(content_chat_message_message);
   content_chat_message.append(content_chat_message_timestamp);
   content_chat.append(content_chat_message);
 }
 
-function showContentForm(id) {
+function genUserList(server, channel, nicks) {
+  let content_frame = document.getElementById(`content_frame_server_${server}_channel_${channel}_`);
+  let content_frame_userlist = document.createElement('div');
+  content_frame_userlist.className = 'content_frame_userlist';
+  content_frame_userlist.id = `content_frame_userlist_server_${server}_channel_${channel}_`;
+  for (let key in nicks) {
+    let content_frame_userlist_user = document.createElement('span');
+    content_frame_userlist_user.className = `content_frame_userlist_user user_level_${nicks[key]}`;
+    content_frame_userlist_user.id = `content_frame_userlist_user_server_${server}_channel_${channel}_user_${key}_`;
+    content_frame_userlist_user.innerHTML = key;
+    content_frame_userlist.append(content_frame_userlist_user);
+  }
+  content_frame.append(content_frame_userlist);
+}
+
+function showElement(id) {
   cleanWindowFrame();
-  let content_frame = document.getElementById(id);
-  content_frame.style.display = 'block';
+  let element = document.getElementById(id);
+  element.style.display = 'block';
 }
 
 function showConnectForm() {

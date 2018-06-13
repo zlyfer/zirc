@@ -1,6 +1,7 @@
 const {
   app,
-  BrowserWindow
+  BrowserWindow,
+  ipcMain
 } = require('electron')
 const path = require('path')
 
@@ -11,8 +12,15 @@ function createWindow() {
     width: 1280,
     height: 720,
     frame: false,
-    // icon: path.join(__dirname, './images/logo.png')
+    fullscreenable: false,
+    icon: path.join(__dirname, './images/logo.png')
   })
+  win.on('maximize', () => {
+    win.webContents.send('zmaximized');
+  });
+  win.on('unmaximize', () => {
+    win.webContents.send('zunmaximized');
+  });
   win.loadFile('index.html')
   win.webContents.openDevTools() // Debug
 }

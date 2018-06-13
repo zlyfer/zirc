@@ -1,0 +1,7 @@
+<?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg height="64px" width="64px" id="Layer_1" version="1.1" xmlns="http://www.w3.org/2000/svg" >
+<g transform="rotate(-40 32,32)">
+  <polygon points="32,8 48,36 32,36 32,56 16,28 32,28" style="fill:#FFFFFF;stroke:#FFFFFF;stroke-width:0" >
+    <animate attributeName="points" repeatCount="indefinite" dur="1s" values="32,8 48,36 32,36 32,56 16,28 32,28; 32,8 32,36 32,36 32,56 32,28 32,28; 32,8 32,8 32,36 32,56 32,56 32,28; 32,8 48,36 32,36 32,56 16,28 32,28"/>
+  </polygon>
+</g>
+</svg>

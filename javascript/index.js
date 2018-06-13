@@ -1,3 +1,6 @@
+const {
+  ipcRenderer
+} = require('electron');
 const remote = require('electron').remote;
 
 window.onload = () => {
@@ -22,13 +25,20 @@ function index_init() {
     }
     remote.getCurrentWindow().close();
   });
+  ipcRenderer.on('zmaximized', () => {
+    document.getElementById('maximize').style.backgroundImage = 'url(./images/win.svg)';
+  });
+  ipcRenderer.on('zunmaximized', () => {
+    document.getElementById('maximize').style.backgroundImage = 'url(./images/max.svg)';
+  });
+
 }
 
-function la(toggle) {
-  let loading_animation = document.getElementById('loading_animation');
-  if (toggle) {
-    loading_animation.style.display = 'block';
-  } else {
-    loading_animation.style.display = 'none';
-  }
-}
+// function la(toggle) {
+//   let loading_animation = document.getElementById('loading_animation');
+//   if (toggle) {
+//     loading_animation.style.display = 'block';
+//   } else {
+//     loading_animation.style.display = 'none';
+//   }
+// }
