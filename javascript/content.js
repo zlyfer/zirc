@@ -3,9 +3,9 @@ var connections = {};
 
 function content_init() {
 
-  document.getElementById('newserver').addEventListener('click', (e) => {
-    showConnectForm();
-  });
+  // document.getElementById('newserver').addEventListener('click', (e) => {
+  //   showConnectForm();
+  // });
 
   document.getElementById('connect_connect').addEventListener('click', (e) => {
     let server = document.getElementById('connect_server').value;
@@ -88,7 +88,7 @@ function addServerListEntry(name, type, id, server = false) {
   let entry = document.createElement('div');
   let entry_name = document.createElement('span');
   entry.className = `entry ${type}`;
-  if (server_list.children.length == 1) {
+  if (server_list.children.length == 0) {
     entry.className += " first";
   }
   entry.id = id;
@@ -164,18 +164,23 @@ function addServerFrame(server) {
 function addChannelFrame(server, channel) {
   let window_frame = document.getElementById('window_frame');
   let content_frame = document.createElement('div');
-  let content_chat = document.createElement('select');
+  let content_chat = document.createElement('div');
+  let content_chatuser = document.createElement('input');
   let content_chatbar = document.createElement('input');
   let content_send = document.createElement('input');
   content_frame.className = 'content_frame';
   content_frame.id = `content_frame_server_${server}_channel_${channel}_`;
   content_chat.className = "content_chat";
   content_chat.id = `content_chat_server_${server}_channel_${channel}_`;
-  content_chat.multiple = true;
+  content_chatuser.className = 'content_chatuser';
+  content_chatuser.id = `content_chatuser_server_${server}_channel_${channel}_`;
+  content_chatuser.type = 'text';
+  content_chatuser.disabled = true;
+  content_chatuser.value = connections[server].nickname;
   content_chatbar.className = 'content_chatbar';
   content_chatbar.id = `content_chatbar_server_${server}_channel_${channel}_`;
   content_chatbar.type = 'text';
-  content_chatbar.placeholder = `Type here to chat with ${channel}..`;
+  content_chatbar.placeholder = `Chat with ${channel}..`;
   content_send.className = 'content_send';
   content_send.id = `content_send_server_${server}_channel_${channel}_`;
   content_send.value = 'Send';
@@ -190,10 +195,11 @@ function addChannelFrame(server, channel) {
         receiver: channel,
         sender: connections[server].nickname,
         message: message
-      })
+      });
     }
   });
   content_frame.append(content_chat);
+  content_frame.append(content_chatuser);
   content_frame.append(content_chatbar);
   content_frame.append(content_send);
   window_frame.append(content_frame);
@@ -201,9 +207,20 @@ function addChannelFrame(server, channel) {
 
 function newMSG(server, data) {
   let content_chat = document.getElementById(`content_chat_server_${server}_channel_${data.receiver}_`);
-  let option = document.createElement('option');
-  option.innerHTML = `${data.sender}: ${data.message}`;
-  content_chat.append(option);
+  let content_chat_message = document.createElement('div');
+  let content_chat_message_sender = document.createElement('span');
+  let content_chat_message_message = document.createElement('span');
+  let content_chat_message_timestamp = document.createElement('span');
+  content_chat_message_sender.className = "content_chat_message_sender";
+  content_chat_message_sender.innerHTML = `${data.sender}`;
+  content_chat_message_message.className = "content_chat_message_message";
+  content_chat_message_message.innerHTML = `${data.message}`;
+  content_chat_message_timestamp.className = "content_chat_message_timestamp";
+  content_chat_message_timestamp.innerHTML = `00:00`;
+  content_chat_message.append(content_chat_message_sender);
+  content_chat_message.append(content_chat_message_message);
+  content_chat_message.append(content_chat_message_timestamp);
+  content_chat.append(content_chat_message);
 }
 
 function showContentForm(id) {

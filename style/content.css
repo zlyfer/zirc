@@ -1,138 +1,113 @@
 :root {
-  --bg_main: #F5F5F5;
-  --bg_primary: #E0E0E0;
-  --bg_secondary: #BDBDBD;
-  --accent: #E91E63;
-  --dark_accent: #D81B60;
-  --dark_accent2: #C2185B;
-  --dark_accent3: #AD1457;
-  --dark_accent4: #880E4F;
-  --light_accent: #F06292;
+  --white_h: 0;
+  --white_s: 0%;
+  --white_l: 100%;
+  --accent_h: 207;
+  --accent_s: 89%;
+  --accent_l: 65%;
+  --white0: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 0%));
+  --white1: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 5%));
+  --white2: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 10%));
+  --white3: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 15%));
+  --white4: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 35%));
+  --white5: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 45%));
+  --white6: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 55%));
+  --white7: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 65%));
+  --white8: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 75%));
+  --accent0: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 0%));
+  --accent1: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 5%));
+  --accent2: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 10%));
+  --accent3: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 15%));
+  --accent4: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 20%));
+  --accent5: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 25%));
 }
 
-input[type=text] {
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--accent0);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  width: 15px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: var(--white0);
+}
+
+*::-webkit-scrollbar-track:hover {
+  width: 15px;
+}
+
+*::selection {
+  background-color: var(--accent1);
+  color: var(--white0);
+}
+
+input[type=text], input[type=button] {
   height: 25px;
   appearance: none;
   text-align: center;
   outline: none;
   font-family: sans-serif;
   font-size: calc(1vw + 1vh);
-  color: var(--dark_accent);
-  border: 1px solid var(--dark_accent);
-  background-color: var(--bg_main);
+  color: var(--accent2);
+  background-color: var(--white2);
+  border: 1px solid var(--white2);
+}
+
+input[type=text]:not(.content_chatuser):not(.content_chatbar), input[type=button]:not(.content_send) {
+  border-radius: 10px;
 }
 
 input[type=text]::placeholder {
-  color: var(--light_accent);
+  color: var(--accent0);
 }
 
-input[type=button], input[type=submit] {
-  height: 29px;
-  appearance: none;
-  text-align: center;
-  outline: none;
-  font-family: sans-serif;
-  font-size: calc(1vw + 1vh);
-  color: var(--dark_accent);
-  border: 1px solid var(--dark_accent);
-  background-color: var(--bg_primary);
+input[type=text]:not(.content_chatbar):not(:disabled):active, input[type=text]:not(.content_chatbar):not(:disabled):focus {
+  border: 1px solid var(--accent1);
 }
 
-input[type=button]:hover, input[type=submit]:hover {
+input[type=button]:hover {
   cursor: pointer;
-  color: var(--bg_main);
-  border: 1px solid var(--dark_accent);
-  background-color: var(--dark_accent);
+  color: var(--white0);
+  background-color: var(--accent1);
 }
 
-input[type=button]:active, input[type=submit]:active {
-  color: var(--bg_main);
-  border: 1px solid var(--dark_accent2);
-  background-color: var(--dark_accent2);
+input[type=button]:active {
+  color: var(--white0);
+  background-color: var(--accent2);
 }
 
-div#server_list {
-  width: 15%;
-  height: calc(100% - 28px);
-  top: 28px;
-  left: 0px;
-  border-right: 1px solid var(--dark_accent);
-  position: absolute;
-}
-
-div.entry {
-  width: 100%;
-  user-select: none;
-  cursor: pointer;
-}
-
-div.entry:not(.first):not(.channel):not(#newserver) {
-  margin-top: 5px;
-}
-
-div#newserver {
-  position: absolute;
-  bottom: 0;
-  background-color: var(--accent);
-}
-
-div#newserver:hover {
-  background-color: var(--dark_accent);
-}
-
-div#newserver:active {
-  background-color: var(--dark_accent2);
-}
-
-div.entry.server {
-  background-color: var(--dark_accent);
-}
-
-div.entry.channel {
-  background-color: var(--dark_accent2);
-}
-
-div.entry span.name {
-  color: var(--bg_primary);
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  font-size: 18px;
-  font-family: sans-serif;
-  margin-top: 5px;
-  display: inline-block;
-  overflow: hidden;
+input[type=text]:disabled {
+  color: var(--white0);
+  background-color: var(--accent2);
 }
 
 div#window_frame {
-  width: calc(85% - 1px);
+  width: 80%;
   height: calc(100% - 28px);
   top: 28px;
-  left: calc(15% + 1px);
+  left: 20%;
   position: absolute;
-  background-color: var(--bg_primary);
-}
-
-div#connect_form {
-  width: 40%;
-  height: 70%;
-  position: absolute;
-  left: 30%;
-  top: 15%;
-  border: 1px solid var(--accent);
-  background-color: var(--bg_main);
-}
-
-div#connect_form input {
-  width: 90%;
-  margin-left: 5%;
-  margin-top: 3vh;
-  height: 14%;
+  background-color: var(--white0);
 }
 
 div.content_frame {
   width: 100%;
   height: 100%;
+}
+
+div#connect_form {
+  width: 40%;
+  height: 67%;
+  position: absolute;
+  left: 30%;
+  top: 12%;
+  /* display: none; */
 }
 
 div.join_channel_form {
@@ -141,49 +116,146 @@ div.join_channel_form {
   position: absolute;
   left: 30%;
   top: 25%;
-  border: 1px solid var(--accent);
-  background-color: var(--bg_main);
+}
+
+div#connect_form input, div.join_channel_form input {
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 2.5vh;
+}
+
+div#connect_form input {
+  height: 14%;
 }
 
 div.join_channel_form input {
-  width: 90%;
-  margin-left: 5%;
-  margin-top: 3vh;
   height: 22%;
 }
 
-input.content_chatbar {
-  width: 90%;
+div.content_chat {
+  background-color: var(--white0);
+  position: absolute;
+  width: 99%;
+  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
+  padding-top: 1%;
   left: 1%;
-  height: 25px;
-  top: calc(100% - 25px - 20px);
+  overflow: auto;
+}
+
+input.content_chatuser {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  width: 10%;
+  left: 1%;
+  height: 30px;
+  top: calc(99% - 20px - 20px);
+  position: absolute;
+  font-family: sans-serif;
+  font-size: 16px;
+  color: var(--white0);
+  background-color: var(--accent0);
+}
+
+input.content_chatbar::placeholder {
+  color: var(--white6);
+}
+
+input.content_chatbar {
+  width: calc(79% - 3px);
+  left: calc(11% + 1px);
+  height: 30px;
+  top: calc(99% - 20px - 20px);
   position: absolute;
   text-align: left;
   padding-left: 0.5%;
   padding-right: 0.5%;
   font-family: sans-serif;
   font-size: 16px;
+  color: var(--white8);
 }
 
 input.content_send {
-  width: 6.5%;
+  width: 8%;
   position: absolute;
-  left: 92.5%;
-  height: 29px;
-  top: calc(100% - 25px - 20px);
+  left: 91%;
+  height: 34px;
+  top: calc(99% - 20px - 20px);
   font-family: sans-serif;
   font-size: 16px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
-select.content_chat {
-  outline: none;
-  appearance: none;
-  background-color: var(--bg_main);
+div.content_chat_message {
+  width: 99%;
+  margin-bottom: 5px;
+}
+
+span.content_chat_message_sender {
+  width: 14%;
+  display: inline-block;
+  text-align: right;
+  font-weight: bold;
+  color: var(--white4);
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 32px;
   position: absolute;
-  width: 98%;
-  height: calc(100% - 1% - 25px - 20px - 2%);
-  top: 1%;
-  left: 1%;
+}
+
+span.content_chat_message_message {
+  min-height: 32px;
+  width: 78%;
+  display: inline-block;
+  color: var(--white4);
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 32px;
+  word-break: break-all;
+  margin-left: 15.1%;
+}
+
+span.content_chat_message_timestamp {
+  right: 1.3%;
+  color: var(--white5);
+  font-family: sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  position: absolute;
+}
+
+div#server_list {
+  width: 20%;
+  height: calc(100% - 28px - 64px);
+  top: 28px;
+  left: 0px;
+  background-color: var(--accent0);
+  position: absolute;
+  overflow: auto;
+}
+
+div.entry {
+  width: 100%;
+  user-select: none;
+  cursor: pointer;
+}
+
+div.entry.server {
+  background-color: var(--accent2);
+}
+
+div.entry.channel {
+  background-color: var(--accent1);
+}
+
+div.entry span.name {
+  color: var(--white0);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  font-size: 18px;
+  font-family: sans-serif;
+  margin-top: 5px;
+  display: inline-block;
   overflow: hidden;
-  border: 1px solid var(--accent);
 }
