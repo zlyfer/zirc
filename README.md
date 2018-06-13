@@ -10,7 +10,7 @@ npm install
 npm start
 ```
 ## Disclaimer
-None so far.
+- Design may change in future!
 ## FAQ
 - How do I leave a server/channel?
      - Rightclick on the server/channel in the server list.
