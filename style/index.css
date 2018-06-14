@@ -8,7 +8,7 @@ div.titlebar {
   top: 0px;
   left: 0px;
   position: absolute;
-  background-color: var(--accent1);
+  background-color: var(--accent2);
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
@@ -21,13 +21,13 @@ div.titlebar_button {
   background-color: var(--accent2);
 }
 
-div.titlebar_button:hover {
-  background-color: var(--accent0);
+div.titlebar_button:not(#close):hover {
+  background-color: var(--accent3);
   cursor: pointer;
 }
 
-div.titlebar_button:active {
-  background-color: var(--accent3);
+div.titlebar_button:not(#close):active {
+  background-color: var(--accent4);
 }
 
 div#logo {
@@ -39,6 +39,15 @@ div#logo {
   position: absolute;
   left: 0px;
   top: 0px;
+}
+
+div#close:hover {
+  background-color: var(--red0);
+  cursor: pointer;
+}
+
+div#close:active {
+  background-color: var(--red1);
 }
 
 div#close {

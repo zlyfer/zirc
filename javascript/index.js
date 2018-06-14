@@ -31,14 +31,13 @@ function index_init() {
   ipcRenderer.on('zunmaximized', () => {
     document.getElementById('maximize').style.backgroundImage = 'url(./images/max.svg)';
   });
-
 }
 
-// function la(toggle) {
-//   let loading_animation = document.getElementById('loading_animation');
-//   if (toggle) {
-//     loading_animation.style.display = 'block';
-//   } else {
-//     loading_animation.style.display = 'none';
-//   }
-// }
+function la(toggle) {
+  let logo = document.getElementById('logo');
+  if (toggle) {
+    logo.style.backgroundImage = 'url(./images/load.svg)';
+  } else {
+    logo.style.backgroundImage = 'url(./images/logo.svg)';
+  }
+}

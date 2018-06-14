@@ -5,6 +5,11 @@
   --accent_h: 207;
   --accent_s: 89%;
   --accent_l: 65%;
+  --red_h: 0;
+  --red_s: 85%;
+  --red_l: 60%;
+  --red0: hsl(var(--red_h), var(--red_s), calc(var(--red_l) - 0%));
+  --red1: hsl(var(--red_h), var(--red_s), calc(var(--red_l) - 5%));
   --white0: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 0%));
   --white1: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 5%));
   --white2: hsl(var(--white_h), var(--white_s), calc(var(--white_l) - 10%));
@@ -20,6 +25,13 @@
   --accent3: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 15%));
   --accent4: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 20%));
   --accent5: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 25%));
+  --join-color: #4CAF50;
+  --leave-color: #FF9800;
+  --quit-color: #FF9800;
+}
+
+div#server_list::-webkit-scrollbar {
+  display: none;
 }
 
 *::-webkit-scrollbar {
@@ -30,21 +42,13 @@
   background-color: var(--accent0);
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  width: 15px;
-}
-
 *::-webkit-scrollbar-track {
   background-color: var(--white0);
 }
 
-*::-webkit-scrollbar-track:hover {
-  width: 15px;
-}
-
 *::selection {
-  background-color: var(--accent1);
-  color: var(--white0);
+  background-color: var(--white0);
+  /* color: var(--white0); */
 }
 
 input[type=text], input[type=button] {
@@ -53,7 +57,8 @@ input[type=text], input[type=button] {
   text-align: center;
   outline: none;
   font-family: sans-serif;
-  font-size: calc(1vw + 1vh);
+  /* font-size: calc(1vw + 1vh); */
+  font-size: 150%;
   color: var(--accent2);
   background-color: var(--white2);
   border: 1px solid var(--white2);
@@ -88,10 +93,10 @@ input[type=text]:disabled {
 }
 
 div#window_frame {
-  width: calc(100% - (2 * 128px));
+  width: 80%;
   height: calc(100% - 28px);
   top: 28px;
-  left: calc(2 * 128px);
+  left: 20%;
   position: absolute;
   background-color: var(--white0);
 }
@@ -214,12 +219,30 @@ span.content_chat_message_message {
   margin-left: 15%;
   display: inline-block;
   text-align: left;
-  font-weight: normal;
-  color: var(--white4);
   font-family: sans-serif;
   font-size: 16px;
   line-height: 32px;
   word-wrap: break-word;
+}
+
+span.content_chat_message_message.message_type_message {
+  font-weight: normal;
+  color: var(--white4);
+}
+
+span.content_chat_message_message.message_type_join {
+  font-weight: bold;
+  color: var(--join-color);
+}
+
+span.content_chat_message_message.message_type_leave {
+  font-weight: bold;
+  color: var(--leave-color);
+}
+
+span.content_chat_message_message.message_type_quit {
+  font-weight: bold;
+  color: var(--leave-color);
 }
 
 span.content_chat_message_timestamp {
@@ -232,7 +255,6 @@ span.content_chat_message_timestamp {
   font-family: sans-serif;
   font-size: 14px;
   line-height: 28px;
-  /* word-wrap: break-word; */
   position: absolute;
 }
 
@@ -255,88 +277,132 @@ span.content_frame_userlist_user {
   margin-left: 5%;
   margin-bottom: 5px;
   display: inline-block;
-  color: var(--white8);
   font-family: sans-serif;
   font-size: 16px;
+  font-weight: bold;
   line-height: 32px;
   word-break: break-all;
   text-align: center;
+  color: var(--white5);
 }
+
+/* span.user_level_\@_ {
+  color: green;
+}
+span.user_level_\%_ {
+  color: yellow;
+}
+span.user_level_\+_ {
+  color: blue;
+}
+span.user_level__ {
+  color: red;
+} */
 
 div#footer {
   position: absolute;
   top: calc(100% - 48px);
   left: 0px;
-  width: calc(2 * 128px);
-  height: 48px;
-  background-color: var(--accent0);
+  width: 20%;
+  height: 47px;
+  background-color: var(--accent1);
+  border-top: 1px solid var(--accent3);
 }
 
 div#newserver, div#settings {
   position: absolute;
-  top: calc(100% - 48px);
-  width: 128px;
-  height: 48px;
-  background-color: var(--accent4);
+  top: calc(100% - 44px);
+  width: 40px;
+  height: 40px;
+  background-color: var(--accent1);
   cursor: pointer;
+  border-radius: 5px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 48px;
 }
 
 div#newserver {
-  left: 0px;
-  background-position: center;
+  left: calc(100% - (2 * 40px) - 4px);
   background-image: url("../images/add.svg");
-  background-repeat: no-repeat;
-  background-size: 48px;
 }
 
 div#settings {
-  left: 128px;
-  background-position: center;
+  left: calc(100% - 44px);
   background-image: url("../images/set.svg");
-  background-repeat: no-repeat;
-  background-size: 48px;
 }
 
 div#newserver:hover, div#settings:hover {
   background-color: var(--accent3);
 }
 
-div#newserver:active, div#settings:active {
-  background-color: var(--accent5);
-}
+/* div#newserver:active, div#settings:active {
+  background-color: var(--accent4);
+} */
 
 div#server_list {
-  width: calc(2 * 128px);
+  width: 20%;
   height: calc(100% - 28px - 48px);
   top: 28px;
   left: 0px;
-  background-color: var(--accent0);
+  background-color: var(--white2);
   position: absolute;
   overflow: auto;
 }
 
-div.entry {
+span.server_list_entry {
+  height: 48px;
   width: 100%;
-  user-select: none;
-  cursor: pointer;
-}
-
-div.entry.server {
-  background-color: var(--accent2);
-}
-
-div.entry.channel {
-  background-color: var(--accent1);
-}
-
-div.entry span.name {
-  color: var(--white0);
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  font-size: 18px;
-  font-family: sans-serif;
-  margin-top: 5px;
   display: inline-block;
-  overflow: hidden;
+  font-family: sans-serif;
+  text-align: center;
+  /* font-size: 24px; */
+  font-size: 150%;
+  line-height: 48px;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+  cursor: pointer;
+  /* text-overflow: ellipsis;
+  overflow-x: hidden; */
+}
+
+span.server_list_entry_server {
+  font-weight: bold;
+  background-color: var(--white0);
+  color: var(--accent0);
+}
+
+span.server_list_entry_channel {
+  background-color: var(--white1);
+  color: var(--accent0);
+}
+
+span.server_list_entry_server:hover {
+  background-color: var(--accent0);
+  color: var(--white0);
+}
+
+span.server_list_entry_server:active, span.server_list_entry_channel:hover {
+  background-color: var(--accent1);
+  color: var(--white0);
+}
+
+span.server_list_entry_channel:active {
+  background-color: var(--accent2);
+  color: var(--white0);
+}
+
+span.server_list_entry_channel.newmsg.hidden {
+  animation: newhiddenmsg 2s ease infinite;
+}
+
+@keyframes newhiddenmsg {
+  0% {
+    background-color: var(--accent0);
+    color: var(--white1);
+  }
+  80% {
+    background-color: var(--white1);
+    color: var(--accent0);
+  }
 }
