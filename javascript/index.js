@@ -1,11 +1,14 @@
 const {
-  ipcRenderer
+  ipcRenderer,
+  remote
 } = require('electron');
-const remote = require('electron').remote;
 
 window.onload = () => {
+  la(true);
   index_init();
   content_init();
+  ipcRenderer.send('requestConfig');
+  la(false);
 };
 
 function index_init() {
@@ -21,17 +24,33 @@ function index_init() {
   });
   document.getElementById('close').addEventListener('click', e => {
     for (let server in connections) {
-      connections[server].quit("Client closed.");
+      connections[server].disconnect("Client closed.");
     }
+    saveConfig();
     remote.getCurrentWindow().close();
   });
-  ipcRenderer.on('zmaximized', () => {
+  ipcRenderer.on('zmaximized', (event) => {
     document.getElementById('maximize').style.backgroundImage = 'url(./images/win.svg)';
   });
-  ipcRenderer.on('zunmaximized', () => {
+  ipcRenderer.on('zunmaximized', (event) => {
     document.getElementById('maximize').style.backgroundImage = 'url(./images/max.svg)';
   });
 }
+
+ipcRenderer.on('setConfig', (event, cfg) => {
+  config = cfg;
+  for (let key in config.servers) {
+    joinServer(config.servers[key].host);
+    for (let i = 0; i < config.servers[key].channels.length; i++) {
+      joinChannel(config.servers[key].host, config.servers[key].channels[i], false, config.servers[key].username);
+    }
+    newClient(config.servers[key].host, config.servers[key].port, config.servers[key].username, config.servers[key].realname, config.servers[key].channels);
+  }
+});
+
+function saveConfig() {
+  ipcRenderer.send('saveConfig', config);
+};
 
 function la(toggle) {
   let logo = document.getElementById('logo');

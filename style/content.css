@@ -336,10 +336,6 @@ div#newserver:hover, div#settings:hover {
   background-color: var(--accent3);
 }
 
-/* div#newserver:active, div#settings:active {
-  background-color: var(--accent4);
-} */
-
 div#server_list {
   width: 20%;
   height: calc(100% - 28px - 48px);

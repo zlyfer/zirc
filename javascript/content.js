@@ -1,8 +1,8 @@
 const irc = require('irc');
 var connections = {};
+var config;
 
 function content_init() {
-
   document.getElementById('newserver').addEventListener('click', (e) => {
     showConnectForm();
   });
@@ -12,49 +12,63 @@ function content_init() {
     let port = document.getElementById('connect_port').value;
     let username = document.getElementById('connect_username').value;
     let realname = document.getElementById('connect_realname').value;
-    let client = new irc.Client(server, username, {
-      userName: username,
-      realName: realname,
-      port: port
-    });
-    client.addListener('message', (nick, to, text, message) => {
-      newMSG(server, to, nick, text, 'message');
-    });
-    client.addListener('names', (channel, nicks) => {
-      genUserList(server, channel, nicks);
-    });
-    client.addListener('join', (channel, nick) => {
-      if (nick != username) {
-        addUserToUserList(server, channel, nick);
-        newMSG(server, channel, nick, 'joined the channel.', 'join');
-      }
-    });
-    client.addListener('part', (channel, nick) => {
-      if (nick != username) {
-        removeUserFromUserList(server, channel, nick);
-        newMSG(server, channel, nick, 'left the channel.', 'leave');
-      }
-    });
-    client.addListener('quit', (nick, reason, channels, message) => {
-      if (nick != username) {
-        let rmessage = '';
-        for (let i = 0; i < message.args.length; i++) {
-          rmessage += `${message.args[i]} `;
-        }
-        rmessage = rmessage.slice(0, -1);
-        for (let i = 0; i < channels.length; i++) {
-          removeUserFromUserList(server, channels[i], nick);
-          newMSG(server, channels[i], nick, 'has quit.', 'quit', rmessage);
-        }
-      }
-    });
-    connections[server] = client;
     joinServer(server);
+    newClient(server, port, username, realname);
     document.getElementById('connect_server').value = '';
     document.getElementById('connect_port').value = '';
     document.getElementById('connect_username').value = '';
     document.getElementById('connect_realname').value = '';
   });
+}
+
+function newClient(server, port, username, realname, channels = []) {
+  let client = new irc.Client(server, username, {
+    userName: username,
+    realName: realname,
+    port: port,
+    channels: channels
+  });
+  client.addListener('message', (nick, to, text, message) => {
+    newMSG(server, to, nick, text, 'message');
+  });
+  client.addListener('names', (channel, nicks) => {
+    genUserList(server, channel, nicks);
+  });
+  client.addListener('join', (channel, nick) => {
+    if (nick != username) {
+      addUserToUserList(server, channel, nick);
+      newMSG(server, channel, nick, 'has joined the channel.', 'join');
+    }
+  });
+  client.addListener('part', (channel, nick) => {
+    if (nick != username) {
+      removeUserFromUserList(server, channel, nick);
+      newMSG(server, channel, nick, 'has left the channel.', 'leave');
+    }
+  });
+  client.addListener('quit', (nick, reason, channels, message) => {
+    if (nick != username) {
+      let rmessage = '';
+      for (let i = 0; i < message.args.length; i++) {
+        rmessage += `${message.args[i]} `;
+      }
+      rmessage = rmessage.slice(0, -1);
+      for (let i = 0; i < channels.length; i++) {
+        removeUserFromUserList(server, channels[i], nick);
+        newMSG(server, channels[i], nick, 'has quit.', 'quit', rmessage);
+      }
+    }
+  });
+  if (!config.servers[server]) {
+    config.servers[server] = {
+      host: server,
+      port: port,
+      username: username,
+      realname: realname,
+      channels: []
+    };
+  }
+  connections[server] = client;
 }
 
 function joinServer(server) {
@@ -71,11 +85,13 @@ function leaveServer(server) {
   delete connections[server];
 }
 
-function joinChannel(server, channel) {
+function joinChannel(server, channel, connectClient = true, nick = false) {
   cleanWindowFrame();
   addServerListEntry(channel, 'channel', `server_list_entry_server_${server}_channel_${channel}_`, server);
-  addChannelFrame(server, channel);
-  connections[server].join(channel);
+  addChannelFrame(server, channel, nick);
+  if (connectClient) {
+    connections[server].join(channel);
+  }
 }
 
 function leaveChannel(server, channel) {
@@ -186,6 +202,9 @@ function addServerFrame(server) {
     let channel_name = document.getElementById(`join_channel_channel_server_${server}_`).value;
     join_channel_channel.value = '';
     joinChannel(server, channel_name);
+    if (config.servers[server].channels.indexOf(channel_name) == -1) {
+      config.servers[server].channels.push(channel_name);
+    }
   });
   join_channel_form.append(join_channel_server);
   join_channel_form.append(join_channel_channel);
@@ -193,7 +212,12 @@ function addServerFrame(server) {
   window_frame.append(join_channel_form);
 }
 
-function addChannelFrame(server, channel) {
+function addChannelFrame(server, channel, nick = false) {
+  if (nick) {
+    rnick = nick;
+  } else {
+    rnick = connections[server].nick;
+  }
   let window_frame = document.getElementById('window_frame');
   let content_frame = document.createElement('div');
   let content_chat = document.createElement('div');
@@ -208,7 +232,7 @@ function addChannelFrame(server, channel) {
   content_chatuser.id = `content_chatuser_server_${server}_channel_${channel}_`;
   content_chatuser.type = 'text';
   content_chatuser.disabled = true;
-  content_chatuser.value = connections[server].nick;
+  content_chatuser.value = rnick;
   content_chatbar.className = 'content_chatbar';
   content_chatbar.id = `content_chatbar_server_${server}_channel_${channel}_`;
   content_chatbar.type = 'text';
@@ -223,7 +247,7 @@ function addChannelFrame(server, channel) {
     if (message != '') {
       content_chatbar.value = '';
       connections[server].say(channel, message);
-      newMSG(server, channel, connections[server].nick, message, 'message');
+      newMSG(server, channel, rnick, message, 'message');
     }
   });
   content_frame.append(content_chat);
