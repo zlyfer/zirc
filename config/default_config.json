@@ -1,5 +1,7 @@
 {
   "windowWidth": 1280,
   "windowHeight": 720,
-  "servers": {}
+  "servers": {},
+  "autojoin": false,
+  "maximized": false
 }

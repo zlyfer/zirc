@@ -28,6 +28,8 @@
   --join-color: #4CAF50;
   --leave-color: #FF9800;
   --quit-color: #FF9800;
+  --link-color: var(--white4);
+  --link-hover-color: var(--white5);
 }
 
 div#server_list::-webkit-scrollbar {
@@ -47,8 +49,12 @@ div#server_list::-webkit-scrollbar {
 }
 
 *::selection {
-  background-color: var(--white0);
-  /* color: var(--white0); */
+  background-color: var(--accent0);
+  color: var(--white0);
+}
+
+input[type=button], input[type=text]:disabled {
+  user-select: none;
 }
 
 input[type=text], input[type=button] {
@@ -228,6 +234,17 @@ span.content_chat_message_message {
 span.content_chat_message_message.message_type_message {
   font-weight: normal;
   color: var(--white4);
+}
+
+a.content_chat_message_message_link {
+  font-weight: normal;
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a.content_chat_message_message_link:hover {
+  text-decoration: underline;
+  color: var(--link-hover-color);
 }
 
 span.content_chat_message_message.message_type_join {

@@ -36,7 +36,10 @@ function createWindow() {
   ipcMain.on('saveConfig', (event, cfg) => {
     fs.writeFileSync(configFile, JSON.stringify(cfg), 'utf-8');
   });
-  // win.webContents.openDevTools(); // Debug
+  if (config.maximized) {
+    win.maximize();
+  }
+  win.webContents.openDevTools(); // Debug
 }
 
 app.on('ready', createWindow)

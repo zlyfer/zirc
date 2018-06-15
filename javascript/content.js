@@ -8,17 +8,18 @@ function content_init() {
   });
 
   document.getElementById('connect_connect').addEventListener('click', (e) => {
-    let server = document.getElementById('connect_server').value;
-    let port = document.getElementById('connect_port').value;
-    let username = document.getElementById('connect_username').value;
-    let realname = document.getElementById('connect_realname').value;
-    joinServer(server);
-    newClient(server, port, username, realname);
-    document.getElementById('connect_server').value = '';
-    document.getElementById('connect_port').value = '';
-    document.getElementById('connect_username').value = '';
-    document.getElementById('connect_realname').value = '';
+    doJoinServer();
   });
+
+  let join_server_form_input_list = ['connect_server', 'connect_port', 'connect_username', 'connect_realname'];
+  for (let i = 0; i < join_server_form_input_list.length; i++) {
+    let element = document.getElementById(join_server_form_input_list[i]);
+    element.addEventListener('keyup', (e) => {
+      if (e.keyCode == 13) {
+        doJoinServer();
+      }
+    })
+  }
 }
 
 function newClient(server, port, username, realname, channels = []) {
@@ -194,22 +195,43 @@ function addServerFrame(server) {
   join_channel_channel.id = `join_channel_channel_server_${server}_`;
   join_channel_channel.type = 'text';
   join_channel_channel.placeholder = '#channel';
+  join_channel_channel.addEventListener('keyup', (e) => {
+    if (e.keyCode == 13) {
+      doJoinChannel(server, join_channel_channel);
+    }
+  });
   join_channel_button.className = 'join_channel_button';
   join_channel_button.id = `join_channel_button_server_${server}_`;
   join_channel_button.type = 'button';
   join_channel_button.value = 'Join Channel';
   join_channel_button.addEventListener('click', (e) => {
-    let channel_name = document.getElementById(`join_channel_channel_server_${server}_`).value;
-    join_channel_channel.value = '';
-    joinChannel(server, channel_name);
-    if (config.servers[server].channels.indexOf(channel_name) == -1) {
-      config.servers[server].channels.push(channel_name);
-    }
+    doJoinChannel(server, join_channel_channel);
   });
   join_channel_form.append(join_channel_server);
   join_channel_form.append(join_channel_channel);
   join_channel_form.append(join_channel_button);
   window_frame.append(join_channel_form);
+}
+
+function doJoinChannel(server, join_channel_channel) {
+  joinChannel(server, join_channel_channel.value);
+  if (config.servers[server].channels.indexOf(join_channel_channel.value) == -1) {
+    config.servers[server].channels.push(join_channel_channel.value);
+  }
+  join_channel_channel.value = '';
+}
+
+function doJoinServer() {
+  let server = document.getElementById('connect_server').value;
+  let port = document.getElementById('connect_port').value;
+  let username = document.getElementById('connect_username').value;
+  let realname = document.getElementById('connect_realname').value;
+  joinServer(server);
+  newClient(server, port, username, realname);
+  document.getElementById('connect_server').value = '';
+  document.getElementById('connect_port').value = '';
+  document.getElementById('connect_username').value = '';
+  document.getElementById('connect_realname').value = '';
 }
 
 function addChannelFrame(server, channel, nick = false) {
@@ -237,6 +259,17 @@ function addChannelFrame(server, channel, nick = false) {
   content_chatbar.id = `content_chatbar_server_${server}_channel_${channel}_`;
   content_chatbar.type = 'text';
   content_chatbar.placeholder = `Chat with ${channel}..`;
+  content_chatbar.addEventListener('keyup', (e) => {
+    if (e.keyCode == 13) {
+      let content_chatbar = document.getElementById(`content_chatbar_server_${server}_channel_${channel}_`);
+      let message = content_chatbar.value;
+      if (message != '') {
+        content_chatbar.value = '';
+        connections[server].say(channel, message);
+        newMSG(server, channel, rnick, message, 'message');
+      }
+    }
+  });
   content_send.className = 'content_send';
   content_send.id = `content_send_server_${server}_channel_${channel}_`;
   content_send.value = 'Send';
@@ -270,6 +303,20 @@ function newMSG(server, channel, sender, message, type, rmessage = false) {
   content_chat_message_sender.className = "content_chat_message_sender";
   content_chat_message_sender.innerHTML = sender;
   content_chat_message_message.className = `content_chat_message_message message_type_${type}`;
+
+  let link_regex = /[\s]?https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
+  let marker = '!ifyouseethismarkerpleasereportit!';
+  let marker_regex = new RegExp(marker, "g");
+  let match;
+  let links = [];
+  while ((match = link_regex.exec(message)) !== null) {
+    links.push(match[0]);
+  }
+  for (let i = 0; i < links.length; i++) {
+    message = message.replace(links[i], `${links[i][0].replace(/[\S]/ig, '')}</span><a href="${links[i].replace(/[\s]/ig, '')}" class="content_chat_message_message_link">${marker}${links[i].replace(/[\s]/ig, '')}${marker}</a><span>${links[i][links[i].length-1].replace(/[\S]/ig, '')}`);
+  }
+  message = message.replace(marker_regex, '');
+
   content_chat_message_message.innerHTML = message;
   if (rmessage != false) {
     content_chat_message_message.innerHTML += ` (${rmessage})`;
