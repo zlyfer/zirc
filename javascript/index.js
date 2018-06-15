@@ -55,11 +55,18 @@ ipcRenderer.on('setConfig', (event, cfg) => {
   config = cfg;
   if (config.autojoin) {
     for (let key in config.servers) {
-      joinServer(config.servers[key].host);
-      for (let i = 0; i < config.servers[key].channels.length; i++) {
-        joinChannel(config.servers[key].host, config.servers[key].channels[i], false, config.servers[key].username);
+      if (!connections[config.servers[key].host]) {
+        joinServer(config.servers[key].host);
+        for (let i = 0; i < config.servers[key].channels.length; i++) {
+          joinChannel(config.servers[key].host, config.servers[key].channels[i].toLowerCase(), false, config.servers[key].username);
+        }
+        let channels = config.servers[key].channels;
+        let lower_channels = [];
+        for (let i = 0; i < channels.length; i++) {
+          lower_channels.push(channels[i].toLowerCase());
+        }
+        newClient(config.servers[key].host, config.servers[key].port, config.servers[key].username, config.servers[key].realname, lower_channels);
       }
-      newClient(config.servers[key].host, config.servers[key].port, config.servers[key].username, config.servers[key].realname, config.servers[key].channels);
     }
   }
 });

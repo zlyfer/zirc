@@ -25,11 +25,15 @@
   --accent3: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 15%));
   --accent4: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 20%));
   --accent5: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 25%));
+  --link-color: var(--white4);
+  --link-hover-color: var(--white5);
   --join-color: #4CAF50;
   --leave-color: #FF9800;
   --quit-color: #FF9800;
-  --link-color: var(--white4);
-  --link-hover-color: var(--white5);
+  --user_level_\@_: #A5D6A7;
+  --user_level_\%_: #EF9A9A;
+  --user_level_\+_: #90CAF9;
+  --user_level__: #EEEEEE;
 }
 
 div#server_list::-webkit-scrollbar {
@@ -114,33 +118,41 @@ div.content_frame {
 
 div#connect_form {
   width: 40%;
-  height: 67%;
+  height: 80%;
   position: absolute;
   left: 30%;
   top: 10%;
-  /* display: none; */
 }
 
 div.join_channel_form {
   width: 40%;
   height: 40%;
   position: absolute;
-  left: 30%;
+  left: 5%;
   top: 25%;
 }
 
-div#connect_form input, div.join_channel_form input {
+div.new_pm_form {
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  left: 55%;
+  top: 25%;
+}
+
+div#connect_form input, div.join_channel_form input, div.new_pm_form input {
   width: 90%;
   margin-left: 5%;
-  margin-top: 2.5vh;
 }
 
 div#connect_form input {
-  height: 14%;
+  height: calc((100% - (6 * 20px)) / 6);
+  margin-top: 14px;
 }
 
-div.join_channel_form input {
-  height: 22%;
+div.join_channel_form input, div.new_pm_form input {
+  height: calc((100% - (3 * 20px)) / 3);
+  margin-top: 14px;
 }
 
 input.content_chatuser {
@@ -303,18 +315,21 @@ span.content_frame_userlist_user {
   color: var(--white5);
 }
 
-/* span.user_level_\@_ {
-  color: green;
+span.user_level_\@_ {
+  background-color: var(--user_level_\@_);
 }
+
 span.user_level_\%_ {
-  color: yellow;
+  background-color: var(--user_level_\%_);
 }
+
 span.user_level_\+_ {
-  color: blue;
+  background-color: var(--user_level_\+_);
 }
+
 span.user_level__ {
-  color: red;
-} */
+  background-color: var(--user_level__);
+}
 
 div#footer {
   position: absolute;
@@ -350,7 +365,7 @@ div#settings {
 }
 
 div#newserver:hover, div#settings:hover {
-  background-color: var(--accent3);
+  background-color: var(--accent2);
 }
 
 div#server_list {
@@ -406,16 +421,9 @@ span.server_list_entry_channel:active {
 }
 
 span.server_list_entry_channel.newmsg.hidden {
-  animation: newhiddenmsg 2s ease infinite;
+  color: var(--white1);
+  background-color: var(--accent0);
+  /* animation: newhiddenmsg 2s ease infinite; */
 }
 
-@keyframes newhiddenmsg {
-  0% {
-    background-color: var(--accent0);
-    color: var(--white1);
-  }
-  80% {
-    background-color: var(--white1);
-    color: var(--accent0);
-  }
-}
+@keyframes newhiddenmsg {}
