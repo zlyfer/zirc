@@ -3,9 +3,9 @@ const user_level_list = ['@', '%', '+', ''];
 var connections = {};
 var config;
 
-// TODO: Features: Auto-Scroll, Settings Pages, Private Message (see TODO Events & Actions), Commands
-// TODO: Actions: action, notice, whois, ctcp, send (Private Message)
-// TODO: Events: pm, motd, topic, kick, kill, selfMessage, notice, nick, invite, (+mode & -mode for channel), whois, action, error, raw
+// TODO: Settings Page, Commands
+// TODO: Actions: action, notice, whois, ctcp
+// TODO: Events: motd, topic, kick, kill, selfMessage, notice, nick, invite, (+mode & -mode for channel), whois, action, error, raw
 // TODO: Events extra: ctcp, ctcp-notice, ctcp-privmsg, ctcp-version
 // TOOD: Colors: irc.colors.codes, irc.colors.wrap
 
@@ -35,7 +35,15 @@ function newClient(server, port, username, realname, channels = []) {
     channels: channels
   });
   client.addListener('message#', (nick, to, text, message) => {
-    newMSG(server, to, nick, text, 'message');
+    newMSG(server, to, nick, text, 'message', false, 'channel');
+  });
+  client.addListener('pm', (nick, text, message) => {
+    if (pmJoined(server, nick)) {
+      newMSG(server, nick, nick, text, 'message', false, 'pm');
+    } else {
+      startPM(server, nick);
+      newMSG(server, nick, nick, text, 'message', false, 'pm');
+    }
   });
   client.addListener('names', (channel, nicks) => {
     genUserList(server, channel.toLowerCase(), nicks);
@@ -50,13 +58,13 @@ function newClient(server, port, username, realname, channels = []) {
   client.addListener('join', (channel, nick, message) => {
     if (nick != client.nick) {
       addUserToUserList(server, channel.toLowerCase(), nick, client.chans[channel].users[nick]);
-      newMSG(server, channel.toLowerCase(), nick, 'has joined the channel.', 'join');
+      newMSG(server, channel.toLowerCase(), nick, 'has joined the channel.', 'join', false, 'channel');
     }
   });
   client.addListener('part', (channel, nick, reason, message) => {
     if (nick != client.nick) {
       removeUserFromUserList(server, channel.toLowerCase(), nick);
-      newMSG(server, channel.toLowerCase(), nick, 'has left the channel.', 'leave');
+      newMSG(server, channel.toLowerCase(), nick, 'has left the channel.', 'leave', false, 'channel');
     }
   });
   client.addListener('quit', (nick, reason, channels, message) => {
@@ -68,7 +76,10 @@ function newClient(server, port, username, realname, channels = []) {
       rmessage = rmessage.slice(0, -1);
       for (let i = 0; i < channels.length; i++) {
         removeUserFromUserList(server, channels[i], nick);
-        newMSG(server, channels[i], nick, 'has quit.', 'quit', rmessage);
+        newMSG(server, channels[i], nick, 'has quit.', 'quit', rmessage, 'channel');
+      }
+      if (pmJoined(server, nick)) {
+        newMSG(server, nick, nick, 'has quit.', 'quit', rmessage, 'pm');
       }
     }
   });
@@ -88,6 +99,7 @@ function joinServer(server) {
   cleanWindowFrame();
   addServerListEntry(server, 'server', `server_list_entry_server_${server}_`);
   addServerFrame(server);
+  selectLastChat();
 }
 
 function leaveServer(server) {
@@ -102,11 +114,12 @@ function joinChannel(server, channel, connectClient = true, nick = false) {
   cleanWindowFrame();
   addServerListEntry(channel, 'channel', `server_list_entry_server_${server}_channel_${channel}_`, server);
   if (connectClient) {
-    addChannelFrame(server, channel, connections[server].nick);
+    addChatFrame(server, channel, connections[server].nick, 'channel');
     connections[server].join(channel);
   } else {
-    addChannelFrame(server, channel, nick);
+    addChatFrame(server, channel, nick, 'channel');
   }
+  selectLastChat();
 }
 
 function leaveChannel(server, channel) {
@@ -115,14 +128,34 @@ function leaveChannel(server, channel) {
   connections[server].part(channel);
 }
 
-function removeServerListEntry(name, type, channel = false) {
+function startPM(server, username) {
+  cleanWindowFrame();
+  addServerListEntry(username, 'pm', `server_list_entry_server_${server}_pm_${username}_`, server);
+  addChatFrame(server, username, connections[server].nick, 'pm');
+  selectLastChat();
+}
+
+function endPM(server, username) {
+  removeServerListEntry(server, 'pm', username);
+  removePMFrame(server, username);
+}
+
+function removeServerListEntry(server, type, name = false) {
   let server_list_entry;
-  if (type == 'server') {
-    server_list_entry = document.getElementById(`server_list_entry_server_${name}_`);
-  } else if (type == 'channel') {
-    server_list_entry = document.getElementById(`server_list_entry_server_${name}_channel_${channel}_`);
+  switch (type) {
+    case 'server':
+      server_list_entry = document.getElementById(`server_list_entry_server_${server}_`);
+      break;
+    case 'channel':
+      server_list_entry = document.getElementById(`server_list_entry_server_${server}_channel_${name}_`);
+      break;
+    case 'pm':
+      server_list_entry = document.getElementById(`server_list_entry_server_${server}_pm_${name}_`);
+      break;
   }
-  server_list_entry.remove();
+  if (server_list_entry) {
+    server_list_entry.remove();
+  }
 }
 
 function removeServerFrame(server) {
@@ -136,7 +169,7 @@ function removeAllChannelFrames(server) {
   let content_frames = document.getElementsByClassName('content_frame');
   for (let i = 0; i < content_frames.length; i++) {
     let content_frame = content_frames[i];
-    if (content_frame.id.indexOf(`content_frame_server_${server}_channel_`) != -1) {
+    if (content_frame.id.indexOf(`content_frame_server_${server}_channel_`) != -1 || content_frame.id.indexOf(`content_frame_server_${server}_pm_`) != -1) {
       content_frame.remove();
     }
   }
@@ -147,8 +180,14 @@ function removeChannelFrame(server, channel) {
   content_frame.remove();
 }
 
+function removePMFrame(server, username) {
+  let content_frame = document.getElementById(`content_frame_server_${server}_pm_${username}_`);
+  content_frame.remove();
+}
+
 function addServerListEntry(name, type, id, server = false) {
   let span = document.createElement('span');
+  let server_list_entry;
   switch (type) {
     case 'server':
       let server_list = document.getElementById('server_list');
@@ -159,6 +198,8 @@ function addServerListEntry(name, type, id, server = false) {
       span.addEventListener('click', (e) => {
         if (e.target.innerHTML == name) {
           cleanWindowFrame();
+          deselectServerListEntries();
+          span.className += ' selected';
           showElement(`join_channel_form_server_${name}_`);
           showElement(`new_pm_form_server_${name}_`);
         }
@@ -166,33 +207,67 @@ function addServerListEntry(name, type, id, server = false) {
       span.addEventListener('contextmenu', (e) => {
         if (e.target.innerHTML == name) {
           leaveServer(name);
+          selectLastChat();
         }
       });
       entry.append(span);
       server_list.append(entry);
       break;
     case 'channel':
-      let server_list_entry = document.getElementById(`server_list_entry_server_${server}_`);
+      server_list_entry = document.getElementById(`server_list_entry_server_${server}_`);
       span.id = `server_list_entry_server_${server}_channel_${name}_`;
       span.className = 'server_list_entry server_list_entry_channel';
       span.innerHTML = name;
-      span.addEventListener('click', (e) => {
+      span.addEventListener('mouseover', (e) => {
         if (e.target.innerHTML == name) {
-          cleanWindowFrame();
-          showElement(`content_frame_server_${server}_channel_${name}_`);
           let content_frame = document.getElementById(`content_frame_server_${server}_channel_${name}_`);
           let server_list_entry = getServerListEntryFromOtherId(content_frame, 'content_frame');
           server_list_entry.className = server_list_entry.className.replace(' newmsg', '');
         }
       });
+      span.addEventListener('click', (e) => {
+        if (e.target.innerHTML == name) {
+          cleanWindowFrame();
+          deselectServerListEntries();
+          span.className += ' selected';
+          showElement(`content_frame_server_${server}_channel_${name}_`);
+        }
+      });
       span.addEventListener('contextmenu', (e) => {
         if (e.target.innerHTML == name) {
           leaveChannel(server, name);
+          selectLastChat();
         }
       });
       server_list_entry.append(span);
       break;
-    case 'private':
+    case 'pm':
+      server_list_entry = document.getElementById(`server_list_entry_server_${server}_`);
+      span.id = `server_list_entry_server_${server}_pm_${name}_`;
+      span.className = 'server_list_entry server_list_entry_pm';
+      span.innerHTML = name;
+      span.addEventListener('mouseover', (e) => {
+        if (e.target.innerHTML == name) {
+          let content_frame = document.getElementById(`content_frame_server_${server}_pm_${name}_`);
+          let server_list_entry = getServerListEntryFromOtherId(content_frame, 'content_frame');
+          server_list_entry.className = server_list_entry.className.replace(' newmsg', '');
+        }
+      });
+      span.addEventListener('click', (e) => {
+        if (e.target.innerHTML == name) {
+          cleanWindowFrame();
+          deselectServerListEntries();
+          span.className += ' selected';
+          showElement(`content_frame_server_${server}_pm_${name}_`);
+        }
+      });
+      span.addEventListener('contextmenu', (e) => {
+        if (e.target.innerHTML == name) {
+          endPM(server, name);
+          selectLastChat();
+        }
+      });
+      server_list_entry.append(span);
       break;
   }
 }
@@ -216,7 +291,10 @@ function addServerFrame(server) {
   join_channel_channel.placeholder = '#channel';
   join_channel_channel.addEventListener('keyup', (e) => {
     if (e.keyCode == 13) {
-      doJoinChannel(server, join_channel_channel.value.toLowerCase());
+      if (join_channel_channel.value != '') {
+        doJoinChannel(server, join_channel_channel.value.toLowerCase());
+        join_channel_channel.value = '';
+      }
     }
   });
   join_channel_button.className = 'join_channel_button';
@@ -224,7 +302,10 @@ function addServerFrame(server) {
   join_channel_button.type = 'button';
   join_channel_button.value = 'Join Channel';
   join_channel_button.addEventListener('click', (e) => {
-    doJoinChannel(server, join_channel_channel.value.toLowerCase());
+    if (join_channel_channel.value != '') {
+      doJoinChannel(server, join_channel_channel.value.toLowerCase());
+      join_channel_channel.value = '';
+    }
   });
   join_channel_form.append(join_channel_server);
   join_channel_form.append(join_channel_channel);
@@ -244,15 +325,30 @@ function addServerFrame(server) {
   new_pm_user.id = `new_pm_user_server_${server}_`;
   new_pm_user.type = 'text';
   new_pm_user.placeholder = 'Username';
+  new_pm_user.addEventListener('keyup', (e) => {
+    if (e.keyCode == 13) {
+      if (new_pm_user.value != '') {
+        doStartNewPM(server, new_pm_user.value);
+        new_pm_user.value = '';
+      }
+    }
+  });
   new_pm_open.className = 'new_pm_open';
   new_pm_open.id = `new_pm_open_server_${server}_`;
   new_pm_open.type = 'button';
   new_pm_open.value = 'Open Chat';
+  new_pm_open.addEventListener('click', (e) => {
+    if (new_pm_user.value != '') {
+      doStartNewPM(server, new_pm_user.value);
+      new_pm_user.value = '';
+    }
+  });
   new_pm_form.append(new_pm_pm);
   new_pm_form.append(new_pm_user);
   new_pm_form.append(new_pm_open);
   window_frame.append(join_channel_form);
   window_frame.append(new_pm_form);
+  join_channel_channel.focus();
 }
 
 function doJoinServer() {
@@ -274,64 +370,68 @@ function doJoinServer() {
 }
 
 function doJoinChannel(server, channel) {
-  if (!checkIfChannelJoined(server, channel)) {
+  if (!channelJoined(server, channel)) {
     joinChannel(server, channel);
     if (config.servers[server].channels.indexOf(channel) == -1) {
       config.servers[server].channels.push(channel);
     }
-    channel = '';
   } else {
     cleanWindowFrame();
     showElement(`content_frame_server_${server}_channel_${channel}_`);
   }
 }
 
-function newPM() {
-  console.log('works!');
+function doStartNewPM(server, username) {
+  if (!pmJoined(server, username)) {
+    startPM(server, username);
+  } else {
+    cleanWindowFrame();
+    showElement(`content_frame_server_${server}_pm_${username}_`);
+  }
 }
 
-function addChannelFrame(server, channel, nick) {
+function addChatFrame(server, chatName, nick, type) {
   let window_frame = document.getElementById('window_frame');
   let content_frame = document.createElement('div');
   let content_chat = document.createElement('div');
   let content_chatuser = document.createElement('input');
   let content_chatbar = document.createElement('input');
   let content_send = document.createElement('input');
-  content_frame.className = 'content_frame';
-  content_frame.id = `content_frame_server_${server}_channel_${channel}_`;
-  content_chat.className = "content_chat";
-  content_chat.id = `content_chat_server_${server}_channel_${channel}_`;
+  content_frame.className = `content_frame content_frame_type_${type}_`;
+  content_frame.id = `content_frame_server_${server}_${type}_${chatName}_`;
+  content_chat.className = `content_chat content_chat_type_${type}`;
+  content_chat.id = `content_chat_server_${server}_${type}_${chatName}_`;
   content_chatuser.className = 'content_chatuser';
-  content_chatuser.id = `content_chatuser_server_${server}_channel_${channel}_`;
+  content_chatuser.id = `content_chatuser_server_${server}_${type}_${chatName}_`;
   content_chatuser.type = 'text';
   content_chatuser.disabled = true;
   content_chatuser.value = nick;
-  content_chatbar.className = 'content_chatbar';
-  content_chatbar.id = `content_chatbar_server_${server}_channel_${channel}_`;
+  content_chatbar.className = `content_chatbar content_chatbar_type_${type}_`;
+  content_chatbar.id = `content_chatbar_server_${server}_${type}_${chatName}_`;
   content_chatbar.type = 'text';
-  content_chatbar.placeholder = `Chat with ${channel}..`;
+  content_chatbar.placeholder = `Chat with ${chatName}..`;
   content_chatbar.addEventListener('keyup', (e) => {
     if (e.keyCode == 13) {
-      let content_chatbar = document.getElementById(`content_chatbar_server_${server}_channel_${channel}_`);
+      let content_chatbar = document.getElementById(`content_chatbar_server_${server}_${type}_${chatName}_`);
       let message = content_chatbar.value;
       if (message != '') {
         content_chatbar.value = '';
-        connections[server].say(channel, message);
-        newMSG(server, channel, connections[server].nick, message, 'message');
+        connections[server].say(chatName, message);
+        newMSG(server, chatName, connections[server].nick, message, 'message', false, type);
       }
     }
   });
-  content_send.className = 'content_send';
-  content_send.id = `content_send_server_${server}_channel_${channel}_`;
+  content_send.className = `content_send content_send_type_${type}_`;
+  content_send.id = `content_send_server_${server}_${type}_${chatName}_`;
   content_send.value = 'Send';
   content_send.type = 'button';
   content_send.addEventListener('click', (e) => {
-    let content_chatbar = document.getElementById(`content_chatbar_server_${server}_channel_${channel}_`);
+    let content_chatbar = document.getElementById(`content_chatbar_server_${server}_${type}_${chatName}_`);
     let message = content_chatbar.value;
     if (message != '') {
       content_chatbar.value = '';
-      connections[server].say(channel, message);
-      newMSG(server, channel, connections[server].nick, message, 'message');
+      connections[server].say(chatName, message);
+      newMSG(server, chatName, connections[server].nick, message, 'message', false, type);
     }
   });
   content_frame.append(content_chat);
@@ -339,13 +439,14 @@ function addChannelFrame(server, channel, nick) {
   content_frame.append(content_chatbar);
   content_frame.append(content_send);
   window_frame.append(content_frame);
+  content_chatbar.focus();
 }
 
-function newMSG(server, channel, sender, message, type, rmessage = false) {
+function newMSG(server, receiver, sender, message, mtype, rmessage, ctype) {
   let messages = message.match(/.{1,435}/g);
   for (let i = 0; i < messages.length; i++) {
     message = messages[i];
-    let content_chat = document.getElementById(`content_chat_server_${server}_channel_${channel}_`);
+    let content_chat = document.getElementById(`content_chat_server_${server}_${ctype}_${receiver}_`);
     let server_list_entry = getServerListEntryFromOtherId(content_chat, 'content_chat');
     if (i == 0) {
       if (server_list_entry.className.indexOf('hidden') != -1) {
@@ -357,15 +458,17 @@ function newMSG(server, channel, sender, message, type, rmessage = false) {
     let content_chat_message_message = document.createElement('span');
     let content_chat_message_timestamp = document.createElement('span');
     let date = new Date();
+    let hours = `-${date.getHours()}-`.replace(/-\d{1}-/g, `0${date.getHours()}`).replace(/-/g, '');
+    let minutes = `-${date.getMinutes()}-`.replace(/-\d{1}-/g, `0${date.getMinutes()}`).replace(/-/g, '');
     content_chat_message.className = `content_chat_message message_from_${sender}_`;
     if (content_chat.lastChild) {
-      if (content_chat.lastChild.className.indexOf(`message_from_${sender}_`) != -1 && content_chat.lastChild.children[1].className.indexOf(`message_type_${type}`) != -1) {
+      if (content_chat.lastChild.className.indexOf(`message_from_${sender}_`) != -1 && content_chat.lastChild.children[1].className.indexOf(`message_type_${mtype}`) != -1) {
         sender = '';
       }
     }
     content_chat_message_sender.className = "content_chat_message_sender";
     content_chat_message_sender.innerHTML = sender;
-    content_chat_message_message.className = `content_chat_message_message message_type_${type}`;
+    content_chat_message_message.className = `content_chat_message_message message_type_${mtype}`;
     let link_regex = /[\s]?https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
     let marker = '!ifyouseethismarkerpleasereportit!';
     let marker_regex = new RegExp(marker, "g");
@@ -382,16 +485,17 @@ function newMSG(server, channel, sender, message, type, rmessage = false) {
     if (rmessage != false) {
       content_chat_message_message.innerHTML += ` (${rmessage})`;
     }
-    content_chat_message_timestamp.className = "content_chat_message_timestamp";
-    content_chat_message_timestamp.innerHTML = `${date.getHours()}:${date.getMinutes()}`;
+    content_chat_message_timestamp.className = 'content_chat_message_timestamp';
+    content_chat_message_timestamp.innerHTML = `${hours}:${minutes}`;
     content_chat_message.append(content_chat_message_sender);
     content_chat_message.append(content_chat_message_message);
     content_chat_message.append(content_chat_message_timestamp);
     content_chat.append(content_chat_message);
+    content_chat_message.scrollIntoView();
   }
 }
 
-function checkIfChannelJoined(server, channel) {
+function channelJoined(server, channel) {
   if (!connections[server]) {
     return false;
   } else {
@@ -401,6 +505,19 @@ function checkIfChannelJoined(server, channel) {
       }
     }
     return false;
+  }
+}
+
+function pmJoined(server, username) {
+  if (!connections[server]) {
+    return false;
+  } else {
+    let server_list_entry = document.getElementById(`server_list_entry_server_${server}_pm_${username}_`);
+    if (server_list_entry) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
@@ -414,8 +531,12 @@ function changeUserLevels(server, channel) {
 }
 
 function genUserList(server, channel, nicks) {
+  let content_frame_userlist = document.getElementById(`content_frame_userlist_server_${server}_channel_${channel}_`);
+  if (content_frame_userlist) {
+    content_frame_userlist.remove();
+  }
   let content_frame = document.getElementById(`content_frame_server_${server}_channel_${channel}_`);
-  let content_frame_userlist = document.createElement('div');
+  content_frame_userlist = document.createElement('div');
   content_frame_userlist.className = 'content_frame_userlist';
   content_frame_userlist.id = `content_frame_userlist_server_${server}_channel_${channel}_`;
   content_frame.append(content_frame_userlist);
@@ -474,8 +595,19 @@ function showElement(id) {
   element.style.display = 'block';
   if (element.className.indexOf('content_frame') != -1) {
     let server_list_entry = getServerListEntryFromOtherId(element, 'content_frame');
+    let content_chatbar_id = server_list_entry.id.replace('server_list_entry', 'content_chatbar');
+    let content_chatbar = document.getElementById(content_chatbar_id);
+    if (content_chatbar) {
+      content_chatbar.focus();
+    }
     if (server_list_entry.className.indexOf(' hidden') != -1) {
       server_list_entry.className = server_list_entry.className.replace(' hidden', '');
+    }
+  } else if (element.className.indexOf('join_channel_form') != -1) {
+    let join_channel_channel_id = element.id.replace('join_channel_form', 'join_channel_channel');
+    let join_channel_channel = document.getElementById(join_channel_channel_id);
+    if (join_channel_channel) {
+      join_channel_channel.focus();
     }
   }
 }
@@ -483,7 +615,9 @@ function showElement(id) {
 function showStartForm() {
   cleanWindowFrame();
   let connect_form = document.getElementById('connect_form');
+  let connect_server = document.getElementById('connect_server');
   connect_form.style.display = 'block';
+  connect_server.focus();
 }
 
 function cleanWindowFrame() {
@@ -493,9 +627,22 @@ function cleanWindowFrame() {
     child.style.display = 'none';
     if (child.className.indexOf('content_frame') != -1) {
       let server_list_entry = getServerListEntryFromOtherId(child, 'content_frame');
-      if (server_list_entry.className.indexOf(' hidden') == -1) {
-        server_list_entry.className += ' hidden';
+      if (server_list_entry) {
+        if (server_list_entry.className.indexOf(' hidden') == -1) {
+          server_list_entry.className += ' hidden';
+        }
       }
+    }
+  }
+}
+
+function deselectServerListEntries() {
+  let server_list = document.getElementById('server_list');
+  for (let i = 0; i < server_list.children.length; i++) {
+    let child = server_list.children[i];
+    for (let j = 0; j < child.children.length; j++) {
+      let childchild = child.children[j];
+      childchild.className = childchild.className.replace(' selected', '');
     }
   }
 }
@@ -503,6 +650,24 @@ function cleanWindowFrame() {
 function changeUserName(server, channel, nick) {
   let content_chatuser = document.getElementById(`content_chatuser_server_${server}_channel_${channel}_`);
   content_chatuser.value = nick;
+}
+
+function selectLastChat() {
+  deselectServerListEntries();
+  cleanWindowFrame();
+  let server_list = document.getElementById('server_list');
+  let lastChild = server_list.lastChild;
+  if (lastChild) {
+    lastChild.lastChild.className += ' selected';
+    if (lastChild.children.length == 1) {
+      showElement(lastChild.id.replace('server_list_entry', 'join_channel_form'));
+      showElement(lastChild.id.replace('server_list_entry', 'new_pm_form'));
+    } else {
+      showElement(lastChild.lastChild.id.replace('server_list_entry', 'content_frame'));
+    }
+  } else {
+    showStartForm();
+  }
 }
 
 function getServerListEntryFromOtherId(element, id) {

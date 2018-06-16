@@ -30,6 +30,7 @@
   --join-color: #4CAF50;
   --leave-color: #FF9800;
   --quit-color: #FF9800;
+  --newhiddenmsg: #A5D6A7;
   --user_level_\@_: #A5D6A7;
   --user_level_\%_: #EF9A9A;
   --user_level_\+_: #90CAF9;
@@ -41,7 +42,7 @@ div#server_list::-webkit-scrollbar {
 }
 
 *::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -75,7 +76,7 @@ input[type=text], input[type=button] {
 }
 
 input[type=text]:not(.content_chatuser):not(.content_chatbar), input[type=button]:not(.content_send) {
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 input[type=text]::placeholder {
@@ -112,8 +113,8 @@ div#window_frame {
 }
 
 div.content_frame {
-  width: 80%;
   height: 100%;
+  width: 80%;
 }
 
 div#connect_form {
@@ -174,7 +175,6 @@ input.content_chatbar::placeholder {
 }
 
 input.content_chatbar {
-  width: calc(59% - 3px);
   left: calc(11% + 1px);
   height: 30px;
   top: calc(99% - 20px - 20px);
@@ -187,10 +187,17 @@ input.content_chatbar {
   color: var(--white8);
 }
 
+input.content_chatbar.content_chatbar_type_channel_ {
+  width: calc(59% - 3px);
+}
+
+input.content_chatbar.content_chatbar_type_pm_ {
+  width: calc(59% - 3px + 20%);
+}
+
 input.content_send {
   width: 8%;
   position: absolute;
-  left: 71%;
   height: 34px;
   top: calc(99% - 20px - 20px);
   font-family: sans-serif;
@@ -199,14 +206,29 @@ input.content_send {
   border-bottom-right-radius: 10px;
 }
 
+input.content_send.content_send_type_channel_ {
+  left: 71%;
+}
+
+input.content_send.content_send_type_pm_ {
+  left: 91%;
+}
+
 div.content_chat {
   background-color: var(--white0);
   position: absolute;
-  width: 80%;
   height: calc(100% - 1% - 1% - 20px - 25px - 1%);
   padding-top: 1%;
-  left: 1%;
+  left: 0%;
   overflow: auto;
+}
+
+div.content_chat.content_chat_type_channel {
+  width: 80%;
+}
+
+div.content_chat.content_chat_type_pm {
+  width: 100%;
 }
 
 div.content_chat_message {
@@ -233,7 +255,6 @@ span.content_chat_message_sender {
 
 span.content_chat_message_message {
   min-height: 32px;
-  width: 80%;
   margin-left: 15%;
   display: inline-block;
   text-align: left;
@@ -241,11 +262,25 @@ span.content_chat_message_message {
   font-size: 16px;
   line-height: 32px;
   word-wrap: break-word;
+  width: 78%;
 }
 
 span.content_chat_message_message.message_type_message {
   font-weight: normal;
   color: var(--white4);
+}
+
+span.content_chat_message_timestamp {
+  min-height: 32px;
+  width: 7%;
+  display: inline-block;
+  text-align: left;
+  font-weight: normal;
+  color: var(--white5);
+  font-family: sans-serif;
+  font-size: 14px;
+  line-height: 28px;
+  position: absolute;
 }
 
 a.content_chat_message_message_link {
@@ -272,19 +307,6 @@ span.content_chat_message_message.message_type_leave {
 span.content_chat_message_message.message_type_quit {
   font-weight: bold;
   color: var(--leave-color);
-}
-
-span.content_chat_message_timestamp {
-  min-height: 32px;
-  width: 5%;
-  display: inline-block;
-  text-align: center;
-  font-weight: normal;
-  color: var(--white5);
-  font-family: sans-serif;
-  font-size: 14px;
-  line-height: 28px;
-  position: absolute;
 }
 
 div.content_frame_userlist {
@@ -396,34 +418,30 @@ span.server_list_entry {
 
 span.server_list_entry_server {
   font-weight: bold;
-  background-color: var(--white0);
-  color: var(--accent0);
-}
-
-span.server_list_entry_channel {
-  background-color: var(--white1);
-  color: var(--accent0);
-}
-
-span.server_list_entry_server:hover {
   background-color: var(--accent0);
   color: var(--white0);
 }
 
-span.server_list_entry_server:active, span.server_list_entry_channel:hover {
-  background-color: var(--accent1);
-  color: var(--white0);
-}
-
-span.server_list_entry_channel:active {
+span.server_list_entry_server:hover, span.server_list_entry_server.selected {
   background-color: var(--accent2);
   color: var(--white0);
 }
 
-span.server_list_entry_channel.newmsg.hidden {
-  color: var(--white1);
-  background-color: var(--accent0);
-  /* animation: newhiddenmsg 2s ease infinite; */
+span.server_list_entry_channel, span.server_list_entry_pm {
+  background-color: var(--white1);
+  color: var(--accent0);
 }
 
-@keyframes newhiddenmsg {}
+span.server_list_entry_channel:hover, span.server_list_entry_channel.selected, span.server_list_entry_pm:hover, span.server_list_entry_pm.selected {
+  background-color: var(--accent0);
+  color: var(--white0);
+}
+
+span.server_list_entry_channel.selected, span.server_list_entry_pm.selected {
+  font-weight: bold;
+}
+
+span.server_list_entry_channel.newmsg.hidden, span.server_list_entry_pm.newmsg.hidden {
+  background-color: var(--newhiddenmsg);
+  color: var(--white0);
+}

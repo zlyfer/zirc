@@ -68,6 +68,7 @@ ipcRenderer.on('setConfig', (event, cfg) => {
         newClient(config.servers[key].host, config.servers[key].port, config.servers[key].username, config.servers[key].realname, lower_channels);
       }
     }
+    selectLastChat();
   }
 });
 
