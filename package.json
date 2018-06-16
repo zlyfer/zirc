@@ -14,20 +14,15 @@
   "author": "Frederik 'zlyfer' Shull",
   "license": "MIT",
   "dependencies": {
-    "electron": "^2.0.2",
     "irc": "^0.5.2"
   },
   "devDependencies": {
-    "electron-builder": "^20.15.1"
+    "electron": "^2.0.2"
   },
   "build": {
     "appId": "net.zlyfer.app",
     "mac": {
       "category": "public.app-category.social-networking"
     }
-  },
-  "scripts": {
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
   }
 }
