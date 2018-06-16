@@ -25,11 +25,12 @@
   --accent3: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 15%));
   --accent4: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 20%));
   --accent5: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 25%));
-  --link-color: var(--white4);
-  --link-hover-color: var(--white5);
+  --link-color: #9C27B0;
+  --link-hover-color: #8E24AA;
   --join-color: #4CAF50;
-  --leave-color: #FF9800;
-  --quit-color: #FF9800;
+  --leave-color: #FFC107;
+  --quit-color: #F44336;
+  --notice-color: #E91E63;
   --newhiddenmsg: #A5D6A7;
   --user_level_\@_: #A5D6A7;
   --user_level_\%_: #EF9A9A;
@@ -242,7 +243,7 @@ span.content_chat_message_sender {
   display: inline-block;
   text-align: right;
   font-weight: bold;
-  color: var(--white4);
+  color: var(--white5);
   font-family: sans-serif;
   font-size: 16px;
   line-height: 32px;
@@ -262,25 +263,13 @@ span.content_chat_message_message {
   font-size: 16px;
   line-height: 32px;
   word-wrap: break-word;
-  width: 78%;
+  width: calc(78% - 5px);
+  padding-right: 5px;
 }
 
 span.content_chat_message_message.message_type_message {
   font-weight: normal;
-  color: var(--white4);
-}
-
-span.content_chat_message_timestamp {
-  min-height: 32px;
-  width: 7%;
-  display: inline-block;
-  text-align: left;
-  font-weight: normal;
-  color: var(--white5);
-  font-family: sans-serif;
-  font-size: 14px;
-  line-height: 28px;
-  position: absolute;
+  color: var(--white7);
 }
 
 a.content_chat_message_message_link {
@@ -307,6 +296,24 @@ span.content_chat_message_message.message_type_leave {
 span.content_chat_message_message.message_type_quit {
   font-weight: bold;
   color: var(--leave-color);
+}
+
+span.content_chat_message_message.message_type_notice {
+  font-weight: italic;
+  color: var(--notice-color);
+}
+
+span.content_chat_message_timestamp {
+  min-height: 32px;
+  width: 7%;
+  display: inline-block;
+  text-align: left;
+  font-weight: normal;
+  color: var(--white5);
+  font-family: sans-serif;
+  font-size: 14px;
+  line-height: 28px;
+  position: absolute;
 }
 
 div.content_frame_userlist {

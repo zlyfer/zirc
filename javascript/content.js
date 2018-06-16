@@ -4,8 +4,9 @@ var connections = {};
 var config;
 
 // TODO: Settings Page, Commands
-// TODO: Actions: action, notice, whois, ctcp
-// TODO: Events: motd, topic, kick, kill, selfMessage, notice, nick, invite, (+mode & -mode for channel), whois, action, error, raw
+// TODO: Actions: notice, whois
+// TODO: Events: motd, topic, kick, kill, selfMessage, nick, invite, (+mode & -mode for channel), whois, action, error, raw
+// TODO: Actions extra: action, ctcp
 // TODO: Events extra: ctcp, ctcp-notice, ctcp-privmsg, ctcp-version
 // TOOD: Colors: irc.colors.codes, irc.colors.wrap
 
@@ -32,17 +33,30 @@ function newClient(server, port, username, realname, channels = []) {
     userName: username,
     realName: realname,
     port: port,
-    channels: channels
+    channels: channels,
+    stripColors: true
   });
   client.addListener('message#', (nick, to, text, message) => {
     newMSG(server, to, nick, text, 'message', false, 'channel');
   });
   client.addListener('pm', (nick, text, message) => {
-    if (pmJoined(server, nick)) {
-      newMSG(server, nick, nick, text, 'message', false, 'pm');
-    } else {
+    if (!pmJoined(server, nick)) {
       startPM(server, nick);
-      newMSG(server, nick, nick, text, 'message', false, 'pm');
+    }
+    newMSG(server, nick, nick, text, 'message', false, 'pm');
+  });
+  client.addListener('notice', (nick, to, text, message) => {
+    if (nick == null) {
+      nick = '*';
+    }
+    to = getLastChannelName(server);
+    if (to) {
+      newMSG(server, to, nick, text, 'notice', false, 'channel');
+    } else {
+      if (!pmJoined(server, nick)) {
+        startPM(server, nick);
+      }
+      newMSG(server, nick, nick, text, 'notice', false, 'pm');
     }
   });
   client.addListener('names', (channel, nicks) => {
@@ -50,10 +64,10 @@ function newClient(server, port, username, realname, channels = []) {
     changeUserName(server, channel.toLowerCase(), connections[server].nick);
   });
   client.addListener('+mode', (channel, by, mode, argument, message) => {
-    changeUserLevels(client.opt.server, channel.toLowerCase());
+    changeUserLevels(server, channel.toLowerCase());
   });
   client.addListener('-mode', (channel, by, mode, argument, message) => {
-    changeUserLevels(client.opt.server, channel.toLowerCase());
+    changeUserLevels(server, channel.toLowerCase());
   });
   client.addListener('join', (channel, nick, message) => {
     if (nick != client.nick) {
@@ -138,6 +152,28 @@ function startPM(server, username) {
 function endPM(server, username) {
   removeServerListEntry(server, 'pm', username);
   removePMFrame(server, username);
+}
+
+function getLastChannelName(server) {
+  let server_list_entry_server = document.getElementById(`server_list_entry_server_${server}_`);
+  if (server_list_entry_server) {
+    let children = server_list_entry_server.children;
+    console.log(children);
+    for (let i = children.length - 1; i >= 0; i--) {
+      console.log(children[i]);
+      let child = children[i];
+      if (child) {
+        if (child.id.indexOf(`server_list_entry_server_${server}_channel_`) != -1) {
+          let id = child.id.replace(`server_list_entry_server_${server}_channel_`, '');
+          id = id.substr(0, id.length - 1);
+          return id;
+        }
+      }
+    }
+    return false;
+  } else {
+    return false;
+  }
 }
 
 function removeServerListEntry(server, type, name = false) {
@@ -469,7 +505,8 @@ function newMSG(server, receiver, sender, message, mtype, rmessage, ctype) {
     content_chat_message_sender.className = "content_chat_message_sender";
     content_chat_message_sender.innerHTML = sender;
     content_chat_message_message.className = `content_chat_message_message message_type_${mtype}`;
-    let link_regex = /[\s]?https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
+    // let link_regex = /[\s]?https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
+    let link_regex = /[\s]?(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
     let marker = '!ifyouseethismarkerpleasereportit!';
     let marker_regex = new RegExp(marker, "g");
     let match;
