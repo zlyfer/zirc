@@ -5,12 +5,18 @@ const {
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const configFile = './config/config.json';
-const defaultConfigFile = './config/default_config.json';
-var config = require(defaultConfigFile);
+const defaultConfigFile = './default_config.json';
+const configFile = './config.json';
 
-if (fs.existsSync(configFile)) {
+try {
   var config = require(configFile);
+} catch (err) {
+  console.log('Could not load config file. Trying to load default config instead.');
+  try {
+    var config = require(defaultConfigFile);
+  } catch (err) {
+    console.log('Could not load default config file either.');
+  }
 }
 
 function createWindow() {

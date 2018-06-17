@@ -158,9 +158,7 @@ function getLastChannelName(server) {
   let server_list_entry_server = document.getElementById(`server_list_entry_server_${server}_`);
   if (server_list_entry_server) {
     let children = server_list_entry_server.children;
-    console.log(children);
     for (let i = children.length - 1; i >= 0; i--) {
-      console.log(children[i]);
       let child = children[i];
       if (child) {
         if (child.id.indexOf(`server_list_entry_server_${server}_channel_`) != -1) {
