@@ -28,8 +28,8 @@ yarn start
 ```
 yarn build
 ```
-## Third Party Image Sources
-All (so far) logos, animations and icons by [Joshua 'sythys' Best](https://github.com/Sythys).
+## Third party image sources
+All (so far) logos, animations and icons by [Joshua 'sythys' Best](https://github.com/Sythys) designed for zirc.
 ## FAQ
 #### Q: How do I leave a server/channel?
 **A:** Rightclick on the server/channel in the server list.
