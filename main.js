@@ -30,22 +30,29 @@ function createWindow() {
     icon: path.join(__dirname, './images/logo.png')
   })
   win.loadFile('index.html');
-  win.on('maximize', () => {
+  win.on('maximize', (e) => {
     win.webContents.send('zmaximized');
   });
-  win.on('unmaximize', () => {
+  win.on('unmaximize', (e) => {
     win.webContents.send('zunmaximized');
   });
-  ipcMain.on('requestConfig', (event) => {
+  ipcMain.on('close', (e, cfg) => {
+    fs.writeFileSync(configFile, JSON.stringify(cfg), 'utf-8');
+    app.quit()
+  })
+  ipcMain.on('requestConfig', (e) => {
     win.webContents.send('setConfig', config);
   });
-  ipcMain.on('saveConfig', (event, cfg) => {
-    fs.writeFileSync(configFile, JSON.stringify(cfg), 'utf-8');
-  });
+  ipcMain.on('close', (e, cfg) => {});
   if (config.maximized) {
     win.maximize();
   }
   win.webContents.openDevTools(); // Debug
 }
+
+// Doesn't seem to work.
+// app.on('window-all-closed', () => {
+//   app.quit();
+// })
 
 app.on('ready', createWindow)

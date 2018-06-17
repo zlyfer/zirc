@@ -53,6 +53,7 @@ function newClient(server, port, username, realname, channels = []) {
     if (to) {
       newMSG(server, to, nick, text, 'notice', false, 'channel');
     } else {
+      nick = 'NOTICE';
       if (!pmJoined(server, nick)) {
         startPM(server, nick);
       }
@@ -503,17 +504,26 @@ function newMSG(server, receiver, sender, message, mtype, rmessage, ctype) {
     content_chat_message_sender.className = "content_chat_message_sender";
     content_chat_message_sender.innerHTML = sender;
     content_chat_message_message.className = `content_chat_message_message message_type_${mtype}`;
-    // let link_regex = /[\s]?https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
     let link_regex = /[\s]?(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)[\s]?/ig;
+    let protocol_regex = /https?:\/\//ig
     let marker = '!ifyouseethismarkerpleasereportit!';
     let marker_regex = new RegExp(marker, "g");
     let match;
-    let links = [];
+    let links = {};
     while ((match = link_regex.exec(message)) !== null) {
-      links.push(match[0]);
+      let cstring = match[0];
+      if (!cstring.match(protocol_regex)) {
+        if (cstring.startsWith(' ')) {
+          cstring = cstring.substr(1, cstring.length);
+          cstring = ` https://${cstring}`;
+        } else {
+          cstring = `https://${cstring}`;
+        }
+      }
+      links[match[0]] = cstring;
     }
-    for (let i = 0; i < links.length; i++) {
-      message = message.replace(links[i], `${links[i][0].replace(/[\S]/ig, '')}</span><a href="${links[i].replace(/[\s]/ig, '')}" class="content_chat_message_message_link">${marker}${links[i].replace(/[\s]/ig, '')}${marker}</a><span>${links[i][links[i].length-1].replace(/[\S]/ig, '')}`);
+    for (let key in links) {
+      message = message.replace(key, `${key[0].replace(/[\S]/ig, '')}</span><a href="${links[key].replace(/[\s]/ig, '')}" class="content_chat_message_message_link">${marker}${key.replace(/[\s]/ig, '')}${marker}</a><span>${key[key.length-1].replace(/[\S]/ig, '')}`);
     }
     message = message.replace(marker_regex, '');
     content_chat_message_message.innerHTML = message;

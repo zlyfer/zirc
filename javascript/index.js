@@ -32,14 +32,14 @@ function index_init() {
     for (let server in connections) {
       connections[server].disconnect("Client closed.");
     }
-    saveConfig();
-    remote.getCurrentWindow().close();
+    ipcRenderer.send('close', config);
+    // remote.getCurrentWindow().close(); // As mentioned in main.js, doesn't seem  to work!
   });
-  ipcRenderer.on('zmaximized', (event) => {
+  ipcRenderer.on('zmaximized', (e) => {
     document.getElementById('maximize').style.backgroundImage = 'url(./images/win.svg)';
     config.maximized = true;
   });
-  ipcRenderer.on('zunmaximized', (event) => {
+  ipcRenderer.on('zunmaximized', (e) => {
     document.getElementById('maximize').style.backgroundImage = 'url(./images/max.svg)';
     config.maximized = false;
   });
@@ -71,10 +71,6 @@ ipcRenderer.on('setConfig', (event, cfg) => {
     selectLastChat();
   }
 });
-
-function saveConfig() {
-  ipcRenderer.send('saveConfig', config);
-};
 
 function la(toggle) {
   let logo = document.getElementById('logo');
