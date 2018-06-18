@@ -33,7 +33,7 @@ function index_init() {
       connections[server].disconnect("Client closed.");
     }
     ipcRenderer.send('close', config);
-    // remote.getCurrentWindow().close(); // As mentioned in main.js, doesn't seem  to work!
+    // remote.getCurrentWindow().close(); // As mentioned in main.js, doesn't seem  to work to close the whole app, when built.
   });
   ipcRenderer.on('zmaximized', (e) => {
     document.getElementById('maximize').style.backgroundImage = 'url(./images/win.svg)';
@@ -44,9 +44,11 @@ function index_init() {
     config.maximized = false;
   });
   document.addEventListener('click', function(e) {
-    if (e.target.tagName === 'A' && e.target.href.startsWith('http')) {
+    if (e.target.tagName === 'A') {
       e.preventDefault();
-      shell.openExternal(e.target.href);
+      if (e.target.href.startsWith('http')) {
+        shell.openExternal(e.target.href);
+      }
     }
   })
 }

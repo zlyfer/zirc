@@ -1,10 +1,12 @@
 const irc = require('irc');
 const user_level_list = ['@', '%', '+', ''];
 var connections = {};
+var lastInputs = [];
 var config;
 
-// TODO: Settings Page, Commands
-// TODO: Actions: notice, whois
+// TODO: Commands: whois, topic, kick, nick, invite, ping
+// TODO: Settings Page, Topic for channels, Modes for channels
+// TODO: Notify user when he disconnects/reconnects + auto-reconnect as optional setting.
 // TODO: Events: motd, topic, kick, kill, selfMessage, nick, invite, (+mode & -mode for channel), whois, action, error, raw
 // TODO: Actions extra: action, ctcp
 // TODO: Events extra: ctcp, ctcp-notice, ctcp-privmsg, ctcp-version
@@ -20,7 +22,7 @@ function content_init() {
   let join_server_form_input_list = ['connect_server', 'connect_port', 'connect_username', 'connect_realname'];
   for (let i = 0; i < join_server_form_input_list.length; i++) {
     let element = document.getElementById(join_server_form_input_list[i]);
-    element.addEventListener('keyup', (e) => {
+    element.addEventListener('keydown', (e) => {
       if (e.keyCode == 13) {
         doJoinServer();
       }
@@ -45,18 +47,18 @@ function newClient(server, port, username, realname, channels = []) {
     }
     newMSG(server, nick, nick, text, 'message', false, 'pm');
   });
-  client.addListener('notice', (nick, to, text, message) => {
+  client.addListener('notice', (nick, receiver, text, message) => {
     if (nick == null) {
-      nick = '*';
+      nick = 'Server';
     }
     to = getLastChannelName(server);
     if (to) {
-      newMSG(server, to, nick, text, 'notice', false, 'channel');
+      newMSG(server, to, `-${nick}-`, text, 'notice', false, 'channel');
     } else {
       if (!chatJoined(server, 'NOTICE', 'notice')) {
         startNotice(server, 'NOTICE');
       }
-      newMSG(server, 'NOTICE', nick, text, 'notice', false, 'notice');
+      newMSG(server, 'NOTICE', `-${nick}-`, text, 'notice', false, 'notice');
     }
   });
   client.addListener('names', (channel, nicks) => {
@@ -350,7 +352,7 @@ function addServerFrame(server) {
   join_channel_channel.id = `join_channel_channel_server_${server}_`;
   join_channel_channel.type = 'text';
   join_channel_channel.placeholder = '#channel';
-  join_channel_channel.addEventListener('keyup', (e) => {
+  join_channel_channel.addEventListener('keydown', (e) => {
     if (e.keyCode == 13) {
       if (join_channel_channel.value != '') {
         doJoinChannel(server, join_channel_channel.value.toLowerCase());
@@ -386,7 +388,7 @@ function addServerFrame(server) {
   new_pm_user.id = `new_pm_user_server_${server}_`;
   new_pm_user.type = 'text';
   new_pm_user.placeholder = 'Username';
-  new_pm_user.addEventListener('keyup', (e) => {
+  new_pm_user.addEventListener('keydown', (e) => {
     if (e.keyCode == 13) {
       if (new_pm_user.value != '') {
         doStartNewPM(server, new_pm_user.value);
@@ -472,15 +474,28 @@ function addChatFrame(server, chatName, nick, type) {
     content_chatbar.id = `content_chatbar_server_${server}_${type}_${chatName}_`;
     content_chatbar.type = 'text';
     content_chatbar.placeholder = `Chat with ${chatName}..`;
-    content_chatbar.addEventListener('keyup', (e) => {
-      if (e.keyCode == 13) {
-        let content_chatbar = document.getElementById(`content_chatbar_server_${server}_${type}_${chatName}_`);
-        let message = content_chatbar.value;
-        if (message != '') {
-          content_chatbar.value = '';
-          connections[server].say(chatName, message);
-          newMSG(server, chatName, connections[server].nick, message, 'message', false, type);
-        }
+    content_chatbar.addEventListener('keydown', (e) => {
+      let content_chatbar = document.getElementById(`content_chatbar_server_${server}_${type}_${chatName}_`);
+      switch (e.keyCode) {
+        case 13:
+          let message = content_chatbar.value;
+          addLastInput(message);
+          if (message != '') {
+            content_chatbar.value = '';
+            if (message[0] == '/') {
+              newCMD(server, chatName, connections[server].nick, message);
+            } else {
+              connections[server].say(chatName, message);
+              newMSG(server, chatName, connections[server].nick, message, 'message', false, type);
+            }
+          }
+          break;
+        case 38:
+          content_chatbar.value = getLastInput(content_chatbar.value);
+          break;
+        case 40:
+          content_chatbar.value = getNextLastInput(content_chatbar.value);
+          break;
       }
     });
     content_send.className = `content_send content_send_type_${type}_`;
@@ -492,8 +507,12 @@ function addChatFrame(server, chatName, nick, type) {
       let message = content_chatbar.value;
       if (message != '') {
         content_chatbar.value = '';
-        connections[server].say(chatName, message);
-        newMSG(server, chatName, connections[server].nick, message, 'message', false, type);
+        if (message[0] == '/') {
+          newCMD(server, chatName, connections[server].nick, message);
+        } else {
+          connections[server].say(chatName, message);
+          newMSG(server, chatName, connections[server].nick, message, 'message', false, type);
+        }
       }
     });
     content_frame.append(content_chatuser);
@@ -565,6 +584,38 @@ function newMSG(server, receiver, sender, message, mtype, rmessage, ctype) {
     content_chat_message.append(content_chat_message_timestamp);
     content_chat.append(content_chat_message);
     content_chat_message.scrollIntoView();
+  }
+}
+
+function newCMD(server, chatName, nick, message) {
+  message = message.substr(1, message.length);
+  let command = message.split(' ')[0];
+  message = message.replace(`${command} `, '');
+  let username;
+  switch (command) {
+    case 'pm':
+      username = message.split(' ')[0];
+      message = message.replace(`${username} `, '');
+      if (!chatJoined(server, username, 'pm')) {
+        startPM(server, username);
+        newMSG(server, username, nick, message, 'message', false, 'pm');
+        connections[server].say(username, message);
+      }
+      break;
+    case 'notice':
+      username = message.split(' ')[0];
+      message = message.replace(`${username} `, '');
+      let to = getLastChannelName(server);
+      if (to) {
+        newMSG(server, to, `&gt;${username}&lt;`, message, 'notice', false, 'channel');
+      } else {
+        if (!chatJoined(server, 'NOTICE', 'notice')) {
+          startNotice(server, 'NOTICE');
+        }
+        newMSG(server, 'NOTICE', `&gt;${username}&lt;`, text, 'notice', false, 'notice');
+      }
+      connections[server].notice(username, message);
+      break;
   }
 }
 
@@ -747,4 +798,46 @@ function getServerListEntryFromOtherId(element, id) {
   let server_list_entry_id = element.id.replace(id, 'server_list_entry');
   let server_list_entry = document.getElementById(server_list_entry_id);
   return server_list_entry;
+}
+
+function addLastInput(input) {
+  lastInputs.push(input);
+  let fIndex = lastInputs.indexOf(input);
+  let lIndex = lastInputs.lastIndexOf(input);
+  if (fIndex != -1 && lIndex != -1 && fIndex != lIndex) {
+    lastInputs.splice(fIndex, 1);
+  }
+  if (lastInputs.length > config.inputHistory) {
+    lastInputs = lastInputs.slice(1);
+  }
+}
+
+function getLastInput(input) {
+  if (input != '') {
+    let index = lastInputs.indexOf(input);
+    if (index == -1 || index == 0) {
+      return input;
+    } else {
+      return lastInputs[index - 1];
+    }
+  } else {
+    if (lastInputs.length > 0) {
+      return lastInputs[lastInputs.length - 1];
+    } else {
+      return input;
+    }
+  }
+}
+
+function getNextLastInput(input) {
+  if (input != '') {
+    let index = lastInputs.indexOf(input);
+    if (index == -1 || index == lastInputs.length - 1) {
+      return input;
+    } else {
+      return lastInputs[index + 1];
+    }
+  } else {
+    return input;
+  }
 }

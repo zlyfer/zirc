@@ -3,5 +3,6 @@
   "windowHeight": 720,
   "servers": {},
   "autojoin": false,
-  "maximized": false
+  "maximized": false,
+  "inputHistory": 20
 }
