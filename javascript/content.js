@@ -4,13 +4,14 @@ var connections = {};
 var lastInputs = [];
 var config;
 
-// TODO: Commands: whois, topic, kick, nick, invite, ping
+// TODO: Logging
+// TODO: Commands: topic, kick, nick, invite, ban
 // TODO: Settings Page, Topic for channels, Modes for channels
 // TODO: Notify user when he disconnects/reconnects + auto-reconnect as optional setting.
-// TODO: Events: motd, topic, kick, kill, selfMessage, nick, invite, (+mode & -mode for channel), whois, action, error, raw
-// TODO: Actions extra: action, ctcp
-// TODO: Events extra: ctcp, ctcp-notice, ctcp-privmsg, ctcp-version
+// TODO: Events: motd, topic, kick, kill, selfMessage, nick, invite, (+mode & -mode for channel), error, raw
 // TOOD: Colors: irc.colors.codes, irc.colors.wrap
+// TODO: Commands extra: action, ctcp
+// TODO: Events extra: action, ctcp, ctcp-notice, ctcp-privmsg, ctcp-version
 
 function content_init() {
   document.getElementById('newserver').addEventListener('click', (e) => {
@@ -172,15 +173,29 @@ function getLastChannelName(server) {
       let child = children[i];
       if (child) {
         if (child.id.indexOf(`server_list_entry_server_${server}_channel_`) != -1) {
-          let id = child.id.replace(`server_list_entry_server_${server}_channel_`, '');
-          id = id.substr(0, id.length - 1);
-          return id;
+          let name = child.id.replace(`server_list_entry_server_${server}_channel_`, '');
+          name = name.substr(0, name.length - 1);
+          return name;
         }
       }
     }
     return false;
   } else {
     return false;
+  }
+}
+
+function getCurrentChat(server) {
+  let selected_list = document.getElementsByClassName('selected');
+  for (let i = 0; i < selected_list.length; i++) {
+    let selected = selected_list[i];
+    if (selected) {
+      if (selected.className.includes('server_list_entry_channel')) {
+        let name = selected.id.replace(`server_list_entry_server_${server}_channel_`, '');
+        name = name.substr(0, name.length - 1);
+        return name;
+      }
+    }
   }
 }
 
@@ -591,30 +606,38 @@ function newCMD(server, chatName, nick, message) {
   message = message.substr(1, message.length);
   let command = message.split(' ')[0];
   message = message.replace(`${command} `, '');
-  let username;
+  let username = message.split(' ')[0];
+  message = message.replace(`${username} `, '');
+  let currentChat = getCurrentChat(server);
   switch (command) {
     case 'pm':
-      username = message.split(' ')[0];
-      message = message.replace(`${username} `, '');
-      if (!chatJoined(server, username, 'pm')) {
-        startPM(server, username);
-        newMSG(server, username, nick, message, 'message', false, 'pm');
+      if (command != username) {
+        if (!chatJoined(server, username, 'pm')) {
+          startPM(server, username);
+        }
         connections[server].say(username, message);
+        newMSG(server, username, nick, message, 'message', false, 'pm');
       }
       break;
     case 'notice':
-      username = message.split(' ')[0];
-      message = message.replace(`${username} `, '');
-      let to = getLastChannelName(server);
-      if (to) {
-        newMSG(server, to, `&gt;${username}&lt;`, message, 'notice', false, 'channel');
-      } else {
-        if (!chatJoined(server, 'NOTICE', 'notice')) {
-          startNotice(server, 'NOTICE');
-        }
-        newMSG(server, 'NOTICE', `&gt;${username}&lt;`, text, 'notice', false, 'notice');
+      if (command != username) {
+        newMSG(server, currentChat, `&gt;${username}&lt;`, message, 'notice', false, 'channel');
+        connections[server].notice(username, message);
       }
-      connections[server].notice(username, message);
+      break;
+    case 'whois':
+      if (command != username) {
+        connections[server].whois(username, (whois) => {
+          let channels = "";
+          for (let i = 0; i < whois.channels.length; i++) {
+            channels += ` ${whois.channels[i]}`;
+          }
+          newMSG(server, currentChat, '[WHOIS]', `${whois.nick} (${whois.user}@${whois.host}): ${whois.realname}`, 'whois', false, 'channel');
+          newMSG(server, currentChat, '[WHOIS]', `${whois.nick} ${whois.server}: ${whois.serverinfo}`, 'whois', false, 'channel');
+          newMSG(server, currentChat, '[WHOIS]', `${whois.nick} joined following channels: ${channels}.`, 'whois', false, 'channel');
+          newMSG(server, currentChat, '[WHOIS]', `${whois.nick} ${whois.accountinfo} ${whois.account}.`, 'whois', false, 'channel');
+        });
+      }
       break;
   }
 }

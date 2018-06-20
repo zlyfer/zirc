@@ -42,12 +42,12 @@ div#logo {
 }
 
 div#close:hover {
-  background-color: var(--red0);
+  background-color: var(--close-hover);
   cursor: pointer;
 }
 
 div#close:active {
-  background-color: var(--red1);
+  background-color: var(--close-active);
 }
 
 div#close {
