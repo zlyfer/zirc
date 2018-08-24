@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>zirc - Material IRC Client</title>
+  <link rel="stylesheet" href="./style/content.css">
+  <link rel="stylesheet" href="./style/index.css">
+  <script src="./javascript/content.js"></script>
+  <script src="./javascript/index.js"></script>
+</head>
+
+<body>
+
+  <div class="titlebar">
+    <div id="logo"></div>
+    <div class="titlebar_button" id="close"></div>
+    <div class="titlebar_button" id="maximize"></div>
+    <div class="titlebar_button" id="minimize"></div>
+  </div>
+
+  <!-- #server_list needs to be exactly how it is now! -->
+  <div id="server_list"></div>
+
+  <div id="footer">
+    <div id="newserver"></div>
+    <div id="settings"></div>
+  </div>
+
+  <div id="window_frame">
+    <div id="connect_form">
+      <input id="connect_server_server" type=text value="New Server" disabled>
+      <input id="connect_server" placeholder="Host" type=text>
+      <input id="connect_port" placeholder="Port" type=text>
+      <input id="connect_username" placeholder="Username" type=text>
+      <input id="connect_realname" placeholder="Realname" type=text>
+      <input id="connect_connect" type=button value="Connect">
+    </div>
+  </div>
+
+</body>
+
+</html>
