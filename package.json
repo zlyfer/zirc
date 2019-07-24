@@ -23,7 +23,7 @@
     "electron-builder": "19.54.0"
   },
   "build": {
-    "appId": "net.zlyfer.app",
+    "appId": "net.zlyfer.zirc.app",
     "mac": {
       "category": "public.app-category.social-networking"
     }
