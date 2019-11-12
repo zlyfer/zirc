@@ -1,43 +1,57 @@
 <!DOCTYPE html>
+
 <html>
 
-<head>
-  <meta charset="UTF-8">
-  <title>zirc - Material IRC Client</title>
-  <link rel="stylesheet" href="./style/content.css">
-  <link rel="stylesheet" href="./style/index.css">
-  <script src="./javascript/content.js"></script>
-  <script src="./javascript/index.js"></script>
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <title>zirc - Material IRC Client</title>
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+    <link rel="stylesheet" href="./style/material-colors.css">
+    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/thirdparty/checkbox.css">
+    <script src="./javascript/electron.js"></script>
+    <script src="./javascript/irc.js"></script>
+    <script src="./javascript/ui.js"></script>
+  </head>
 
-<body>
+  <body>
+    <div id="app">
 
-  <div class="titlebar">
-    <div id="logo"></div>
-    <div class="titlebar_button" id="close"></div>
-    <div class="titlebar_button" id="maximize"></div>
-    <div class="titlebar_button" id="minimize"></div>
-  </div>
+      <div id="titlebar">
+        <div id="logo"></div>
+        <div class="button" id="openSettings" v-on:click="openPage = 'settings'"></div>
+        <div class="button" id="close">
+          <div></div>
+        </div>
+        <div class="button" id="maximize">
+          <div id="maximize-state"></div>
+        </div>
+        <div class="button" id="minimize">
+          <div></div>
+        </div>
+      </div>
 
-  <!-- #server_list needs to be exactly how it is now! -->
-  <div id="server_list"></div>
+      <div id="settings" v-if="openPage == 'settings'">
+        <div id="list">
+          <span class="entry" v-for="entry in getConfigKeys()" v-bind:class="{active: config[entry].index == settingsPage.selectedEntry}" v-if="entry != '_'" v-on:click="settingsSelect(entry)">
+            {{entry}}
+          </span>
+        </div>
+        <div id="values">
+          <div class="valuesEntry" v-for="(entry, index) in getSelctedConfig()" v-bind:class="{first: index == 0}">
+            <div class="valuesLabel">
+              <span class="vLName"> {{ entry.name }} </span>
+              <span class="vLDesc"> {{ entry.description }} </span>
+            </div>
+            <div class="valuesInput">
+              <input v-bind:type="entry.type" v-model="entry.value"></input>
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <div id="footer">
-    <div id="newserver"></div>
-    <div id="settings"></div>
-  </div>
-
-  <div id="window_frame">
-    <div id="connect_form">
-      <input id="connect_server_server" type=text value="New Server" disabled>
-      <input id="connect_server" placeholder="Host" type=text>
-      <input id="connect_port" placeholder="Port" type=text>
-      <input id="connect_username" placeholder="Username" type=text>
-      <input id="connect_realname" placeholder="Realname" type=text>
-      <input id="connect_connect" type=button value="Connect">
     </div>
-  </div>
-
-</body>
+  </body>
 
 </html>

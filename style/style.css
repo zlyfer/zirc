@@ -1,0 +1,251 @@
+:root {
+	--join-color: #4caf50;
+	--leave-color: #ffc107;
+	--quit-color: #f44336;
+	--message-color: #595959;
+	--notice-color: #5c6bc0;
+	--whois-color: #ab47bc;
+	--link-color: #737373;
+	--link-hover-color: #8c8c8c;
+	--newhiddenmsg: #a5d6a7;
+	--user_level_\@_: #a5d6a7;
+	--user_level_\%_: #ef9a9a;
+	--user_level_\+_: #90caf9;
+	--user_level__: #eeeeee;
+}
+
+*::-webkit-scrollbar {
+	width: 15px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: var(--blue4);
+}
+*::-webkit-scrollbar-thumb:active {
+	background-color: var(--blue6);
+}
+
+*::-webkit-scrollbar-track {
+	background-color: var(--grey3);
+}
+
+*::selection {
+	background-color: var(--blue5);
+	color: var(--grey1);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+input[type="text"],
+input[type="number"],
+input[type="checkbox"] {
+	border: none;
+	outline: none;
+	background-color: transparent;
+	--webkit-appearance: none;
+}
+
+* {
+	font-family: "Source Sans Pro";
+}
+
+body {
+	background-color: var(--grey1);
+}
+
+div#app {
+	position: absolute;
+	left: 0;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+div#app div#titlebar {
+	width: 100%;
+	height: 28px;
+	top: 0px;
+	left: 0px;
+	position: absolute;
+	background-color: var(--grey4);
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
+}
+
+div#app div#titlebar div#logo {
+	background-image: url("../images/logo.svg");
+	background-repeat: no-repeat;
+	background-size: 28px;
+	height: 28px;
+	width: 28px;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+div#app div#titlebar div.button {
+	position: absolute;
+	height: 28px;
+	width: 40px;
+	-webkit-app-region: no-drag;
+}
+
+div#app div#titlebar div#openSettings {
+	left: 28px;
+}
+
+div#app div#titlebar div.button:not(#close):hover {
+	background-color: var(--grey5);
+	cursor: pointer;
+}
+
+div#app div#titlebar div.button:not(#close):active {
+	background-color: var(--grey6);
+}
+
+div#app div#titlebar div.button#close:hover {
+	background-color: var(--red5);
+	cursor: pointer;
+}
+
+div#app div#titlebar div.button#close:active {
+	background-color: var(--red6);
+}
+
+div#app div#titlebar div.button div {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	top: 4px;
+	right: 10px;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+div#app div#titlebar div.button#close {
+	top: 0px;
+	right: 0px;
+}
+div#app div#titlebar div.button#close div {
+	background-image: url("../images/close.svg");
+}
+
+div#app div#titlebar div.button#maximize {
+	top: 0px;
+	right: 40px;
+}
+div#app div#titlebar div.button#maximize div {
+	background-image: url("../images/maximize.svg");
+}
+
+div#app div#titlebar div.button#minimize {
+	top: 0px;
+	right: 80px;
+}
+div#app div#titlebar div.button#minimize div {
+	width: 30px;
+	right: 5px;
+	background-image: url("../images/minimize.svg");
+}
+
+div#app div#settings {
+	position: absolute;
+	top: 28px;
+	left: 0;
+	width: 100%;
+	height: calc(100% - 28px);
+}
+
+div#app div#settings div#list {
+	width: 165px;
+	height: 100%;
+	background-color: var(--grey2);
+	border-right: 1px solid var(--grey3);
+	box-sizing: border-box;
+	float: left;
+}
+div#app div#settings div#list span.entry {
+	display: block;
+	height: 40px;
+	width: 100%;
+	line-height: 40px;
+	text-align: center;
+	font-weight: bold;
+	color: var(--grey6);
+	cursor: pointer;
+}
+div#app div#settings div#list span.entry:hover {
+	color: var(--grey5);
+}
+
+div#app div#settings div#list span.entry.active {
+	background-color: var(--blue6);
+	color: var(--grey1);
+}
+
+div#app div#settings div#values {
+	width: calc(100% - 165px);
+	height: calc(100% - 60px);
+	background-color: var(--grey1);
+	padding-top: 60px;
+	overflow-y: auto;
+	float: left;
+}
+
+div#app div#settings div#values div.valuesEntry {
+	width: 90%;
+	height: 55px;
+	margin-left: 5%;
+}
+div#app div#settings div#values div.valuesEntry div.valuesLabel {
+	width: 50%;
+	height: 100%;
+	float: left;
+}
+div#app div#settings div#values div.valuesEntry:not(.first) {
+	border-top: 1px solid var(--grey3);
+}
+
+div#app div#settings div#values div.valuesEntry div.valuesLabel span {
+	display: block;
+	width: 100%;
+	height: 50%;
+}
+div#app div#settings div#values div.valuesEntry div.valuesLabel span.vLName {
+	color: var(--grey7);
+	font-size: 16px;
+	line-height: 35px;
+}
+div#app div#settings div#values div.valuesEntry div.valuesLabel span.vLName.noDesc {
+	line-height: 60px;
+}
+div#app div#settings div#values div.valuesEntry div.valuesLabel span.vLDesc {
+	color: var(--grey5);
+	font-size: 15px;
+	line-height: 20px;
+}
+
+div#app div#settings div#values div.valuesEntry div.valuesInput {
+	width: 50%;
+	height: 100%;
+	float: right;
+	/* background-color: red; */
+}
+div#app div#settings div#values div.valuesEntry div.valuesInput input[type="number"] {
+	width: 120px;
+	height: 20px;
+	float: right;
+	margin-top: 7.5px;
+	padding: 10px;
+	color: var(--grey7);
+	background-color: var(--grey2);
+	border-radius: 5px;
+	font-size: 16px;
+}
+div#app div#settings div#values div.valuesEntry div.valuesInput input[type="checkbox"] {
+	float: right;
+	margin-top: 12.5px;
+}

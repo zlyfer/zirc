@@ -1,0 +1,38 @@
+/* Creator: https://codepen.io/thelaazyguy/pen/MvqpPr/ */
+
+input[type="checkbox"] {
+	font-size: 20px;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 3.5em;
+	height: 1.5em;
+	background: var(--grey3);
+	position: relative;
+	cursor: pointer;
+	outline: none;
+	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked {
+	background: var(--green4);
+}
+
+input[type="checkbox"]:after {
+	position: absolute;
+	content: "";
+	width: 1.5em;
+	height: 1.5em;
+	background: var(--red4);
+	-webkit-transform: scale(0.7);
+	transform: scale(0.7);
+	left: 0;
+	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked:after {
+	left: calc(100% - 1.5em);
+	background: #fff;
+}

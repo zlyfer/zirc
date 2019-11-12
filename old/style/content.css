@@ -1,470 +1,490 @@
 :root {
-  --bg_h: 0;
-  --bg_s: 0%;
-  --bg_l: 100%;
-  --accent_h: 207;
-  --accent_s: 89%;
-  --accent_l: 65%;
-  --bg0: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 0%));
-  --bg1: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 5%));
-  --bg2: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 10%));
-  --bg3: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 15%));
-  --bg4: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 35%));
-  --bg5: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 45%));
-  --bg6: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 55%));
-  --bg7: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 65%));
-  --bg8: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 75%));
-  --accent0: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 0%));
-  --accent1: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 5%));
-  --accent2: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 10%));
-  --accent3: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 15%));
-  --accent4: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 20%));
-  --accent5: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 25%));
-  --join-color: #4CAF50;
-  --leave-color: #FFC107;
-  --quit-color: #F44336;
-  --message-color: #595959;
-  --notice-color: #5C6BC0;
-  --whois-color: #AB47BC;
-  --link-color: #737373;
-  --link-hover-color: #8c8c8c;
-  --newhiddenmsg: #A5D6A7;
-  --user_level_\@_: #A5D6A7;
-  --user_level_\%_: #EF9A9A;
-  --user_level_\+_: #90CAF9;
-  --user_level__: #EEEEEE;
-  --close-hover-color: #EF5350;
-  --close-active-color: #F44336;
+	--bg_h: 0;
+	--bg_s: 0%;
+	--bg_l: 100%;
+	--accent_h: 207;
+	--accent_s: 89%;
+	--accent_l: 65%;
+	--bg0: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 0%));
+	--bg1: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 5%));
+	--bg2: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 10%));
+	--bg3: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 15%));
+	--bg4: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 35%));
+	--bg5: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 45%));
+	--bg6: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 55%));
+	--bg7: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 65%));
+	--bg8: hsl(var(--bg_h), var(--bg_s), calc(var(--bg_l) - 75%));
+	--accent0: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 0%));
+	--accent1: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 5%));
+	--blue7: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 10%));
+	--accent3: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 15%));
+	--accent4: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 20%));
+	--accent5: hsl(var(--accent_h), var(--accent_s), calc(var(--accent_l) - 25%));
+	--join-color: #4caf50;
+	--leave-color: #ffc107;
+	--quit-color: #f44336;
+	--message-color: #595959;
+	--notice-color: #5c6bc0;
+	--whois-color: #ab47bc;
+	--link-color: #737373;
+	--link-hover-color: #8c8c8c;
+	--newhiddenmsg: #a5d6a7;
+	--user_level_\@_: #a5d6a7;
+	--user_level_\%_: #ef9a9a;
+	--user_level_\+_: #90caf9;
+	--user_level__: #eeeeee;
+	--close-hover-color: #ef5350;
+	--close-active-color: #f44336;
 }
 
 div#server_list::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 *::-webkit-scrollbar {
-  width: 10px;
+	width: 10px;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--accent0);
-  border-radius: 10px;
+	background-color: var(--accent0);
+	border-radius: 10px;
 }
 
 *::-webkit-scrollbar-track {
-  background-color: var(--bg3);
-  border-radius: 10px;
+	background-color: var(--bg3);
+	border-radius: 10px;
 }
 
 *::selection {
-  background-color: var(--accent0);
-  color: var(--bg0);
+	background-color: var(--accent0);
+	color: var(--bg0);
 }
 
-input[type=button], input[type=text]:disabled {
-  user-select: none;
+input[type="button"],
+input[type="text"]:disabled {
+	user-select: none;
 }
 
-input[type=text], input[type=button] {
-  height: 25px;
-  appearance: none;
-  text-align: center;
-  outline: none;
-  font-family: sans-serif;
-  /* font-size: calc(1vw + 1vh); */
-  font-size: 150%;
-  color: var(--accent2);
-  background-color: var(--bg2);
-  border: 1px solid var(--bg2);
+input[type="text"],
+input[type="button"] {
+	height: 25px;
+	appearance: none;
+	text-align: center;
+	outline: none;
+	font-family: sans-serif;
+	/* font-size: calc(1vw + 1vh); */
+	font-size: 150%;
+	color: var(--blue7);
+	background-color: var(--bg2);
+	border: 1px solid var(--bg2);
 }
 
-input[type=text]:not(.content_chatuser):not(.content_chatbar), input[type=button]:not(.content_send) {
-  border-radius: 5px;
+input[type="text"]:not(.content_chatuser):not(.content_chatbar),
+input[type="button"]:not(.content_send) {
+	border-radius: 5px;
 }
 
-input[type=text]::placeholder {
-  color: var(--accent0);
+input[type="text"]::placeholder {
+	color: var(--accent0);
 }
 
-input[type=text]:not(.content_chatbar):not(:disabled):active, input[type=text]:not(.content_chatbar):not(:disabled):focus {
-  border: 1px solid var(--accent1);
+input[type="text"]:not(.content_chatbar):not(:disabled):active,
+input[type="text"]:not(.content_chatbar):not(:disabled):focus {
+	border: 1px solid var(--accent1);
 }
 
-input[type=button]:hover {
-  cursor: pointer;
-  color: var(--bg0);
-  background-color: var(--accent1);
+input[type="button"]:hover {
+	cursor: pointer;
+	color: var(--bg0);
+	background-color: var(--accent1);
 }
 
-input[type=button]:active {
-  color: var(--bg0);
-  background-color: var(--accent2);
+input[type="button"]:active {
+	color: var(--bg0);
+	background-color: var(--blue7);
 }
 
-input[type=text]:disabled {
-  color: var(--bg0);
-  background-color: var(--accent2);
+input[type="text"]:disabled {
+	color: var(--bg0);
+	background-color: var(--blue7);
 }
 
 div#window_frame {
-  width: 80%;
-  height: calc(100% - 28px);
-  top: 28px;
-  left: 20%;
-  position: absolute;
-  background-color: var(--bg0);
+	width: 80%;
+	height: calc(100% - 28px);
+	top: 28px;
+	left: 20%;
+	position: absolute;
+	background-color: var(--bg0);
 }
 
 div.content_frame {
-  height: 100%;
-  width: 80%;
+	height: 100%;
+	width: 80%;
 }
 
 div#connect_form {
-  width: 40%;
-  height: 80%;
-  position: absolute;
-  left: 30%;
-  top: 10%;
+	width: 40%;
+	height: 80%;
+	position: absolute;
+	left: 30%;
+	top: 10%;
 }
 
 div.join_channel_form {
-  width: 40%;
-  height: 40%;
-  position: absolute;
-  left: 5%;
-  top: 25%;
+	width: 40%;
+	height: 40%;
+	position: absolute;
+	left: 5%;
+	top: 25%;
 }
 
 div.new_pm_form {
-  width: 40%;
-  height: 40%;
-  position: absolute;
-  left: 55%;
-  top: 25%;
+	width: 40%;
+	height: 40%;
+	position: absolute;
+	left: 55%;
+	top: 25%;
 }
 
-div#connect_form input, div.join_channel_form input, div.new_pm_form input {
-  width: 90%;
-  margin-left: 5%;
+div#connect_form input,
+div.join_channel_form input,
+div.new_pm_form input {
+	width: 90%;
+	margin-left: 5%;
 }
 
 div#connect_form input {
-  height: calc((100% - (6 * 20px)) / 6);
-  margin-top: 14px;
+	height: calc((100% - (6 * 20px)) / 6);
+	margin-top: 14px;
 }
 
-div.join_channel_form input, div.new_pm_form input {
-  height: calc((100% - (3 * 20px)) / 3);
-  margin-top: 14px;
+div.join_channel_form input,
+div.new_pm_form input {
+	height: calc((100% - (3 * 20px)) / 3);
+	margin-top: 14px;
 }
 
 input.content_chatuser {
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  width: 10%;
-  left: 1%;
-  height: 30px;
-  top: calc(99% - 20px - 20px);
-  position: absolute;
-  font-family: sans-serif;
-  font-size: 16px;
-  color: var(--bg0);
-  background-color: var(--accent0);
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	width: 10%;
+	left: 1%;
+	height: 30px;
+	top: calc(99% - 20px - 20px);
+	position: absolute;
+	font-family: sans-serif;
+	font-size: 16px;
+	color: var(--bg0);
+	background-color: var(--accent0);
 }
 
 input.content_chatbar::placeholder {
-  color: var(--bg6);
+	color: var(--bg6);
 }
 
 input.content_chatbar {
-  left: calc(11% + 1px);
-  height: 30px;
-  top: calc(99% - 20px - 20px);
-  position: absolute;
-  text-align: left;
-  padding-left: 0.5%;
-  padding-right: 0.5%;
-  font-family: sans-serif;
-  font-size: 16px;
-  color: var(--bg8);
+	left: calc(11% + 1px);
+	height: 30px;
+	top: calc(99% - 20px - 20px);
+	position: absolute;
+	text-align: left;
+	padding-left: 0.5%;
+	padding-right: 0.5%;
+	font-family: sans-serif;
+	font-size: 16px;
+	color: var(--bg8);
 }
 
 input.content_chatbar.content_chatbar_type_channel_ {
-  width: calc(59% - 3px);
+	width: calc(59% - 3px);
 }
 
 input.content_chatbar.content_chatbar_type_pm_ {
-  width: calc(59% - 3px + 20%);
+	width: calc(59% - 3px + 20%);
 }
 
 input.content_send {
-  width: 8%;
-  position: absolute;
-  height: 34px;
-  top: calc(99% - 20px - 20px);
-  font-family: sans-serif;
-  font-size: 16px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+	width: 8%;
+	position: absolute;
+	height: 34px;
+	top: calc(99% - 20px - 20px);
+	font-family: sans-serif;
+	font-size: 16px;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
 }
 
 input.content_send.content_send_type_channel_ {
-  left: 71%;
+	left: 71%;
 }
 
 input.content_send.content_send_type_pm_ {
-  left: 91%;
+	left: 91%;
 }
 
 div.content_chat {
-  background-color: var(--bg0);
-  position: absolute;
-  padding-top: 1%;
-  left: 0%;
-  overflow: auto;
+	background-color: var(--bg0);
+	position: absolute;
+	padding-top: 1%;
+	left: 0%;
+	overflow: auto;
 }
 
 div.content_chat.content_chat_type_channel {
-  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
-  width: 80%;
+	height: calc(100% - 1% - 1% - 20px - 25px - 1%);
+	width: 80%;
 }
 
 div.content_chat.content_chat_type_pm {
-  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
-  width: 100%;
+	height: calc(100% - 1% - 1% - 20px - 25px - 1%);
+	width: 100%;
 }
 
 div.content_chat.content_chat_type_notice {
-  height: calc(100% - 10px);
-  width: 100%;
+	height: calc(100% - 10px);
+	width: 100%;
 }
 
 div.content_chat_message {
-  width: 100%;
-  margin-bottom: 5px;
+	width: 100%;
+	margin-bottom: 5px;
 }
 
 span.content_chat_message_sender {
-  min-height: 32px;
-  width: 14%;
-  display: inline-block;
-  text-align: right;
-  font-weight: bold;
-  color: var(--bg5);
-  font-family: sans-serif;
-  font-size: 16px;
-  line-height: 32px;
-  padding-right: 1%;
-  position: absolute;
-  white-space: nowrap;
-  overflow: hidden !important;
-  text-overflow: ellipsis;
+	min-height: 32px;
+	width: 14%;
+	display: inline-block;
+	text-align: right;
+	font-weight: bold;
+	color: var(--bg5);
+	font-family: sans-serif;
+	font-size: 16px;
+	line-height: 32px;
+	padding-right: 1%;
+	position: absolute;
+	white-space: nowrap;
+	overflow: hidden !important;
+	text-overflow: ellipsis;
 }
 
 span.content_chat_message_message {
-  min-height: 32px;
-  margin-left: 15%;
-  display: inline-block;
-  text-align: left;
-  font-family: sans-serif;
-  font-size: 16px;
-  line-height: 32px;
-  word-wrap: break-word;
-  width: calc(78% - 5px);
-  padding-right: 5px;
+	min-height: 32px;
+	margin-left: 15%;
+	display: inline-block;
+	text-align: left;
+	font-family: sans-serif;
+	font-size: 16px;
+	line-height: 32px;
+	word-wrap: break-word;
+	width: calc(78% - 5px);
+	padding-right: 5px;
 }
 
 span.content_chat_message_message.message_type_message {
-  font-weight: normal;
-  color: var(--message-color);
+	font-weight: normal;
+	color: var(--message-color);
 }
 
 a.content_chat_message_message_link {
-  font-weight: normal;
-  color: var(--link-color);
-  text-decoration: none;
+	font-weight: normal;
+	color: var(--link-color);
+	text-decoration: none;
 }
 
 a.content_chat_message_message_link:hover {
-  text-decoration: underline;
-  color: var(--link-hover-color);
+	text-decoration: underline;
+	color: var(--link-hover-color);
 }
 
 span.content_chat_message_message.message_type_join {
-  font-weight: bold;
-  color: var(--join-color);
+	font-weight: bold;
+	color: var(--join-color);
 }
 
 span.content_chat_message_message.message_type_leave {
-  font-weight: bold;
-  color: var(--leave-color);
+	font-weight: bold;
+	color: var(--leave-color);
 }
 
 span.content_chat_message_message.message_type_quit {
-  font-weight: bold;
-  color: var(--leave-color);
+	font-weight: bold;
+	color: var(--leave-color);
 }
 
 span.content_chat_message_message.message_type_notice {
-  font-weight: italic;
-  color: var(--notice-color);
+	font-weight: italic;
+	color: var(--notice-color);
 }
 
 span.content_chat_message_message.message_type_whois {
-  font-weight: bold;
-  color: var(--whois-color);
+	font-weight: bold;
+	color: var(--whois-color);
 }
 
 span.content_chat_message_timestamp {
-  min-height: 32px;
-  width: 7%;
-  display: inline-block;
-  text-align: left;
-  font-weight: normal;
-  color: var(--bg5);
-  font-family: sans-serif;
-  font-size: 14px;
-  line-height: 28px;
-  position: absolute;
+	min-height: 32px;
+	width: 7%;
+	display: inline-block;
+	text-align: left;
+	font-weight: normal;
+	color: var(--bg5);
+	font-family: sans-serif;
+	font-size: 14px;
+	line-height: 28px;
+	position: absolute;
 }
 
 div.content_frame_userlist {
-  position: absolute;
-  width: 19%;
-  left: 81%;
-  height: calc(100% - 1% - 1% - 20px - 25px - 1%);
-  padding-top: 1%;
-  overflow: auto;
+	position: absolute;
+	width: 19%;
+	left: 81%;
+	height: calc(100% - 1% - 1% - 20px - 25px - 1%);
+	padding-top: 1%;
+	overflow: auto;
 }
 
 span.content_frame_userlist_user {
-  width: 90%;
-  min-height: 32px;
-  padding-left: 1%;
-  padding-right: 1%;
-  background-color: var(--bg2);
-  border-radius: 15px;
-  margin-left: 5%;
-  margin-bottom: 5px;
-  display: inline-block;
-  font-family: sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 32px;
-  word-break: break-all;
-  text-align: center;
-  color: var(--bg5);
+	width: 90%;
+	min-height: 32px;
+	padding-left: 1%;
+	padding-right: 1%;
+	background-color: var(--bg2);
+	border-radius: 15px;
+	margin-left: 5%;
+	margin-bottom: 5px;
+	display: inline-block;
+	font-family: sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 32px;
+	word-break: break-all;
+	text-align: center;
+	color: var(--bg5);
 }
 
 span.user_level_\@_ {
-  background-color: var(--user_level_\@_);
+	background-color: var(--user_level_\@_);
 }
 
 span.user_level_\%_ {
-  background-color: var(--user_level_\%_);
+	background-color: var(--user_level_\%_);
 }
 
 span.user_level_\+_ {
-  background-color: var(--user_level_\+_);
+	background-color: var(--user_level_\+ _);
 }
 
 span.user_level__ {
-  background-color: var(--user_level__);
+	background-color: var(--user_level__);
 }
 
 div#footer {
-  position: absolute;
-  top: calc(100% - 48px);
-  left: 0px;
-  width: 20%;
-  height: 47px;
-  background-color: var(--accent1);
-  border-top: 1px solid var(--accent3);
+	position: absolute;
+	top: calc(100% - 48px);
+	left: 0px;
+	width: 20%;
+	height: 47px;
+	background-color: var(--accent1);
+	border-top: 1px solid var(--accent3);
 }
 
-div#newserver, div#settings {
-  position: absolute;
-  top: calc(100% - 44px);
-  width: 40px;
-  height: 40px;
-  background-color: var(--accent1);
-  cursor: pointer;
-  border-radius: 5px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 48px;
+div#newserver,
+div#settings {
+	position: absolute;
+	top: calc(100% - 44px);
+	width: 40px;
+	height: 40px;
+	background-color: var(--accent1);
+	cursor: pointer;
+	border-radius: 5px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 48px;
 }
 
 div#newserver {
-  left: calc(100% - (2 * 40px) - 4px);
-  background-image: url("../images/add.svg");
+	left: calc(100% - (2 * 40px) - 4px);
+	background-image: url("../images/add.svg");
 }
 
 div#settings {
-  left: calc(100% - 44px);
-  background-image: url("../images/set.svg");
+	left: calc(100% - 44px);
+	background-image: url("../images/set.svg");
 }
 
-div#newserver:hover, div#settings:hover {
-  background-color: var(--accent2);
+div#newserver:hover,
+div#settings:hover {
+	background-color: var(--blue7);
 }
 
 div#server_list {
-  width: 20%;
-  height: calc(100% - 28px - 48px);
-  top: 28px;
-  left: 0px;
-  background-color: var(--bg2);
-  position: absolute;
-  overflow: auto;
+	width: 20%;
+	height: calc(100% - 28px - 48px);
+	top: 28px;
+	left: 0px;
+	background-color: var(--bg2);
+	position: absolute;
+	overflow: auto;
 }
 
 span.server_list_entry {
-  height: 48px;
-  width: 100%;
-  display: inline-block;
-  font-family: sans-serif;
-  text-align: center;
-  /* font-size: 24px; */
-  font-size: 150%;
-  line-height: 48px;
-  padding-left: 0.5%;
-  padding-right: 0.5%;
-  cursor: pointer;
-  /* text-overflow: ellipsis;
+	height: 48px;
+	width: 100%;
+	display: inline-block;
+	font-family: sans-serif;
+	text-align: center;
+	/* font-size: 24px; */
+	font-size: 150%;
+	line-height: 48px;
+	padding-left: 0.5%;
+	padding-right: 0.5%;
+	cursor: pointer;
+	/* text-overflow: ellipsis;
   overflow-x: hidden; */
 }
 
 span.server_list_entry_server {
-  font-weight: bold;
-  background-color: var(--accent0);
-  color: var(--bg0);
+	font-weight: bold;
+	background-color: var(--accent0);
+	color: var(--bg0);
 }
 
-span.server_list_entry_server:hover, span.server_list_entry_server.selected {
-  background-color: var(--accent2);
-  color: var(--bg0);
+span.server_list_entry_server:hover,
+span.server_list_entry_server.selected {
+	background-color: var(--blue7);
+	color: var(--bg0);
 }
 
-span.server_list_entry_channel, span.server_list_entry_pm, span.server_list_entry_notice {
-  background-color: var(--bg1);
-  color: var(--accent0);
+span.server_list_entry_channel,
+span.server_list_entry_pm,
+span.server_list_entry_notice {
+	background-color: var(--bg1);
+	color: var(--accent0);
 }
 
-span.server_list_entry_channel:hover, span.server_list_entry_channel.selected, span.server_list_entry_pm:hover, span.server_list_entry_pm.selected, span.server_list_entry_notice:hover, span.server_list_entry_notice.selected {
-  background-color: var(--accent0);
-  color: var(--bg0);
+span.server_list_entry_channel:hover,
+span.server_list_entry_channel.selected,
+span.server_list_entry_pm:hover,
+span.server_list_entry_pm.selected,
+span.server_list_entry_notice:hover,
+span.server_list_entry_notice.selected {
+	background-color: var(--accent0);
+	color: var(--bg0);
 }
 
-span.server_list_entry_channel.selected, span.server_list_entry_pm.selected {
-  font-weight: bold;
+span.server_list_entry_channel.selected,
+span.server_list_entry_pm.selected {
+	font-weight: bold;
 }
 
 span.server_list_entry_notice {
-  font-weight: bold;
+	font-weight: bold;
 }
 
-span.server_list_entry_channel.newmsg.hidden, span.server_list_entry_pm.newmsg.hidden, span.server_list_entry_notice.newmsg.hidden {
-  background-color: var(--newhiddenmsg);
-  color: var(--bg0);
+span.server_list_entry_channel.newmsg.hidden,
+span.server_list_entry_pm.newmsg.hidden,
+span.server_list_entry_notice.newmsg.hidden {
+	background-color: var(--newhiddenmsg);
+	color: var(--bg0);
 }
