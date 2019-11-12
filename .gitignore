@@ -1,7 +1,7 @@
 desktop.ini
 1632499614018820218620131488525119619323460620.ico
 node_modules
-config.json
+# config.json
 log.json
 dist
 old
