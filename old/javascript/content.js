@@ -11,7 +11,7 @@ var config;
 // TODO: Settings Page, Topic for channels, Modes for channels
 // TODO: Notify user when he disconnects/reconnects + auto-reconnect as optional setting.
 // TODO: Events: motd, topic, kick, kill, selfMessage, nick, invite, (+mode & -mode for channel), error, raw
-// TOOD: Colors: irc.colors.codes, irc.colors.wrap
+// TODO: Colors: irc.colors.codes, irc.colors.wrap
 // TODO: Improve notices destinations.
 // TODO: Commands extra: action, ctcp
 // TODO: Events extra: action, ctcp, ctcp-notice, ctcp-privmsg, ctcp-version

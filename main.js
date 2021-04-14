@@ -9,45 +9,42 @@ const fs = require("fs");
 const configFile = "./config.json";
 
 try {
-	var config = require(configFile);
+  var config = require(configFile);
 } catch (err) {
-	console.log("Could not load configuration file. Using default configuration.");
-	config = {};
+  console.log(
+    "Could not load configuration file. Using default configuration."
+  );
+  config = {};
 }
 
 function createWindow() {
-	win = new BrowserWindow({
-		minHeight: 576,
-		minWidth: 1024,
-		height: config._.height,
-		width: config._.width,
-		frame: false,
-		fullscreenable: false,
-		icon: path.join(__dirname, "./images/logo.png")
-	});
-	win.loadFile("index.html");
-	win.on("maximize", e => {
-		win.webContents.send("got_uMax");
-	});
-	win.on("unmaximize", e => {
-		win.webContents.send("got_uMax");
-	});
-	ipcMain.on("close", (e, data) => {
-		fs.writeFileSync(configFile, JSON.stringify(data), "utf-8");
-		app.quit();
-	});
-	ipcMain.on("requestConfig", e => {
-		win.webContents.send("setConfig", config);
-	});
-	ipcMain.on("resize", (e, data) => {
-		win.setSize(data.w, data.h);
-	});
-	win.webContents.openDevTools(); // Debug
+  win = new BrowserWindow({
+    minHeight: 576,
+    minWidth: 1024,
+    height: config._.height,
+    width: config._.width,
+    frame: false,
+    fullscreenable: false,
+    icon: path.join(__dirname, "./images/logo.png")
+  });
+  win.loadFile("index.html");
+  win.on("maximize", e => {
+    win.webContents.send("got_uMax");
+  });
+  win.on("unmaximize", e => {
+    win.webContents.send("got_uMax");
+  });
+  ipcMain.on("close", (e, data) => {
+    fs.writeFileSync(configFile, JSON.stringify(data), "utf-8");
+    app.quit();
+  });
+  ipcMain.on("requestConfig", e => {
+    win.webContents.send("setConfig", config);
+  });
+  ipcMain.on("resize", (e, data) => {
+    win.setSize(data.w, data.h);
+  });
+  win.webContents.openDevTools(); // Debug
 }
-
-// Doesn't seem to work.
-// app.on('window-all-closed', () => {
-//   app.quit();
-// })
 
 app.on("ready", createWindow);

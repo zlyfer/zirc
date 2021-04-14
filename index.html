@@ -9,10 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
     <link rel="stylesheet" href="./style/material-colors.css">
     <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/thirdparty/animate.css">
     <link rel="stylesheet" href="./style/thirdparty/checkbox.css">
     <script src="./javascript/electron.js"></script>
-    <script src="./javascript/irc.js"></script>
     <script src="./javascript/ui.js"></script>
+    <script src="./javascript/irc.js"></script>
   </head>
 
   <body>
@@ -20,34 +21,114 @@
 
       <div id="titlebar">
         <div id="logo"></div>
-        <div class="button" id="openSettings" v-on:click="openPage = 'settings'"></div>
+        <div class="button" id="openSettings" v-on:click="openPage = (openPage == 'irc') ? 'settings' : 'irc'"></div>
         <div class="button" id="close">
           <div></div>
         </div>
-        <div class="button" id="maximize">
+        <div class="button" id="maximize" v-on:click="eMaximize()">
           <div id="maximize-state"></div>
         </div>
-        <div class="button" id="minimize">
+        <div class="button" id="minimize" v-on:click="eMinimize()">
           <div></div>
         </div>
       </div>
 
-      <div id="settings" v-if="openPage == 'settings'">
+      <div class="content" id="irc" v-if="openPage == 'irc'">
         <div id="list">
-          <span class="entry" v-for="entry in getConfigKeys()" v-bind:class="{active: config[entry].index == settingsPage.selectedEntry}" v-if="entry != '_'" v-on:click="settingsSelect(entry)">
+          <div class="connection" v-for="server in getKeys(connections)">
+            <div class="server" v-on:click="selectedIrcServer = (selectedIrcServer == server) ? '' : server; selectedIrcChannel = ''" v-bind:class="{'active': selectedIrcServer == server, 'busy animated infinite flash slow': busy.includes(server)}">
+              {{connections[server].alias}}
+            </div>
+            <div class="channel" v-if="selectedIrcServer == server" v-for="(channel, index) in getKeys(connections[server].client.chans)" v-on:click="selectedIrcChannel = channel" v-bind:class="{'active': selectedIrcChannel == channel, 'news animated infinite pulse fast': news.includes(channel + '@' + server)}">
+              {{channel}}
+            </div>
+            <!-- TODO: Implement "New Channel" function. -->
+            <div class="channel" v-if="selectedIrcServer == server">
+              +
+            </div>
+          </div>
+          <div class="connection">
+            <!-- TODO: Implement "New Server" function. -->
+            <div class="server">
+              +
+            </div>
+          </div>
+        </div>
+        <div id="chat" v-if="selectedIrcServer != '' && selectedIrcChannel != ''">
+          <div id="chatlog">
+            <div class="message" v-for="message in app.connections[selectedIrcServer].logs[selectedIrcChannel]">
+              <div class="author">{{message.author}}</div>
+              <div class="text">{{message.text}}</div>
+              <div class="time">{{getTime(message.time)}}</div>
+            </div>
+          </div>
+          <div id="userlist">
+            <div class="userlistEntry" v-for="user in getKeys(connections[selectedIrcServer].client.chans[selectedIrcChannel].users)" v-bind:class="['user_level_' + connections[selectedIrcServer].client.chans[selectedIrcChannel].users[user]]">{{user}}</div>
+          </div>
+          <div id="chatbar">
+            <input id="input" type="text" placeholder="Chat here.." @keyup.enter="sendMessage(this)">
+          </div>
+        </div>
+        <div v-else class="notSelected">
+          Select a server and a channel on the left side.
+        </div>
+      </div>
+
+      <div class="content" id="settings" v-if="openPage == 'settings'">
+        <div id="list">
+          <span class="entry" v-for="entry in getConfigKeys()" v-bind:class="{active: entry == selectedSettings}" v-if="entry != '_'" v-on:click="selectedSettings = (selectedSettings == entry) ? '' : entry">
             {{entry}}
           </span>
         </div>
-        <div id="values">
+        <div class="values" v-if="selectedSettings != 'Servers' && selectedSettings != ''">
           <div class="valuesEntry" v-for="(entry, index) in getSelctedConfig()" v-bind:class="{first: index == 0}">
             <div class="valuesLabel">
-              <span class="vLName"> {{ entry.name }} </span>
+              <span class=" vLName"> {{ entry.name }} </span>
               <span class="vLDesc"> {{ entry.description }} </span>
             </div>
             <div class="valuesInput">
               <input v-bind:type="entry.type" v-model="entry.value"></input>
             </div>
           </div>
+        </div>
+        <div class="values" v-else-if="selectedSettings == 'Servers'">
+          <div class="valuesEntry serverEntry" v-for=" (entry, index) in config['Servers'].entries" v-bind:class="{first: index == 0, open: selectedSettingsServer == entry.host}">
+            <div class="valuesLabel serverLabel" attribute="divButton" v-on:click="selectedSettingsServer = (selectedSettingsServer == entry.host) ? '' : entry.host" v-bind:class="{active: selectedSettingsServer == entry.host}">
+              <span class=" vLName"> {{ entry.name }} </span>
+              <span class="vLDesc"> {{ entry.host }}{{ entry.port }} </span>
+            </div>
+            <!-- TODO: Add "Delete Server" button: -->
+            <div class="serverDetails" v-if="selectedSettingsServer == entry.host">
+              <!-- TODO: Make this pretty: -->
+              <div class="serverDetailsEntry">
+                <span>Server Name</span>
+                <input type="text" placeholder="Server Name" v-model="entry.name">
+              </div>
+              <div class="serverDetailsEntry">
+                <span>Server Host Address</span>
+                <input type="text" placeholder="Server Host Address" v-model="entry.host">
+              </div>
+              <div class="serverDetailsEntry">
+                <span>Server Port</span>
+                <input type="number" placeholder="Server Port" v-model="entry.port">
+              </div>
+              <div class="serverDetailsEntry">
+                <span>Your Username</span>
+                <input type="text" placeholder="Your Username" v-model="entry.username">
+              </div>
+              <div class="serverDetailsEntry">
+                <span>Your Realname (optional)</span>
+                <input type="text" placeholder="Your Realname (optional)" v-model="entry.realname">
+              </div>
+              <div class="serverDetailsEntry">
+                <span>Auto Connect to Server</span>
+                <input type="checkbox" v-model="entry.autoconnect">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="notSelected">
+          Select a category on the left side.
         </div>
       </div>
 
